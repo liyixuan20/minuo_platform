@@ -1,0 +1,8 @@
+{{ message }}
+
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <!-- <input type="file"> -->
+    <input type="submit" value="Submit">
+</form>

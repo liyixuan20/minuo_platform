@@ -1,0 +1,14 @@
+<<<<<<< HEAD
+django==3.2
+pillow
+pymysql
+mysqlclient
+cryptography
+=======
+django==3.2
+pillow
+pymysql
+mysqlclient
+cryptography
+>>>>>>> 9fc6bd6 (1)
+sqlalchemy
