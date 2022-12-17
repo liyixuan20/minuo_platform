@@ -1,0 +1,35 @@
+<table border="1">
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>reward</th>
+        <th>create_at</th>
+    </tr>
+
+    <tr>
+        <td>{{ task.id }}</td>
+        <td>{{ task.name }}</td>
+        <td>{{ task.reward }}</td>
+        <td>{{ task.create_at }}</td>
+    </tr>
+</table>
+
+<!-- {{single_tasks}} -->
+
+<table border="1">
+    <tr>
+        <th>id</th>
+        <th>task_id</th>
+        <th>type_id</th>
+        <th>create_at</th>
+    </tr>
+
+    {%for st in single_tasks%}
+    <tr>
+        <td>{{ st.id }}</td>
+        <td>{{ st.task_id }}</td>
+        <td>{{ st.type_id }}</td>
+        <td>{{ st.create_at }}</td>
+    </tr>
+    {%endfor%}
+</table>

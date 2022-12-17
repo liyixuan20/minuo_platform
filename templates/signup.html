@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>SingingUp</title>
+</head>
+<body style="height:100%;"background="/media_url/necoru.jpg">
+{{ message }}
+<div class="card" style="width:480px;border-radius: 12px;height:554px;top:150px;bottom:150px;left:0;right:0 ;margin: auto;
+position: absolute;font-family: PingFang-SC-Regular,Helvetica,'Microsoft Yahei','微软雅黑';">
+    
+  <h3 style="font-size:36px;margin-top:30px;margin-left:39px;">用户注册</h3>
+  <p style="margin-left:39px;">已有账号？<a href="{% url 'login' %}">Log in</a></p>
+  <form class="form-horizontal" method="POST" style = "padding-top:20px;margin-left:39px;">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="username" class="col-sm-3 control-label" style="padding:0;">用户名</label>
+      <div style="margin-right:39px;">
+        <input type="text" class="form-control" name="username" id="username" placeholder="Username" style="margin-bottom:32px;">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password" class="col-sm-3 control-label"style="padding:0;">密码</label>
+      <div style="margin-right:39px;">
+        <input type="password" class="form-control" name="password" id="password" placeholder="Password" style="margin-bottom:32px;">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password2" class="col-sm-3 control-label"style="padding:0;">确认密码</label>
+      <div style="margin-right:39px;">
+        <input type="password" class="form-control" name="password2" id="password2" placeholder="Password" style="margin-bottom:32px;">
+      </div>
+    </div>
+    <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
+        <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">注册</button>
+    </div>
+  </form>
+  
+  {% comment %} 
+  <form method="POST">
+  {% csrf_token %}
+  <label for="username">Username</label>
+  <input type="text" name="username" id="username"><br>
+  
+  <label for="password">Password</label>
+  <input type="text" name="password" id="password"><br>
+  
+  <label for="password2">Password Again</label>
+  <input type="text" name="password2" id="password2"><br>
+
+  <input type="submit" value="submit">
+  </form> {% endcomment %}
+    
+</div>
+</body>

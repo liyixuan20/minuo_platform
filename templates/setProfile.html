@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light justify-content-between sticky-top" style="background: linear-gradient(to right,thistle,cornsilk,#e3f2fd);">
+    <a class="navbar-brand" style="font-family: '幼圆';font-weight: 500;font-size: xx-large;">米诺众包</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="..">主页</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../list/">任务中心</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../upload/">创建任务</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">帮助</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">反馈</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav  justify-content-end">
+            <li class="nav-item"><img src="/media_url/necoru.jpg" class="mx-auto" alt="diluc" style=" 
+                height: 34px;
+                display: flex;
+                border-radius: 50%;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;"></li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">{{ user.username }}</a>
+            </li>  
+            <li class="nav-item">
+                <a class="nav-link" href="../signup/">注册</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container" style="width:100%;height:100%; margin:0;padding:0;max-width:none;">
+    <div class="row" style="width:100%;height:100%;margin:0;">
+        <div class="col-3.5" style="width:18rem;padding:0;">
+            <div class="card" style="width: 100%;height:100%;" style="background:linear-gradient(to right,cornsilk,#e3f2fd);">
+                <h2 style="text-align:center;margin-top:20px;margin-bottom:15px;">个人信息</h2>
+                    <img class="card-img-top mx-auto d-block" src="/media_url/necoru.jpg" alt="Card image cap"style=" 
+                    margin:5px;
+                    margin-top:8px;-
+                    width:15rem;
+                    display: flex;
+                    border-radius: 50%;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;">
+                    <div class="card-body">
+                        <ul class="mr-auto list-group">
+                            <li class="list-group-item" >用户名：{{ username }}</li>
+                            <li class="list-group-item" >邮箱：{{ email }} </li>
+                            <li class="list-group-item" >电话：{{ tel }} </li>
+                            <li class="list-group-item" >积分：{{ points }} </li>
+                        </ul>
+                        <div class="row fa fa-align-center" style="margin:5px;margin-top:10px;">
+                            <a href="#" class="btn btn-block" style="background:linear-gradient(to right,deepskyblue,thistle);">提现</a>
+                        </div>
+                        <div class="row fa fa-align-center" style="margin:5px;margin-top:10px;">
+                            <a href="#" class="btn btn-block " style="background:linear-gradient(to right,deepskyblue,thistle);">修改资料</a>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <div class="col" style="width:100%;padding:0;">
+            <div  style="height:100%;">
+                <div>
+                    
+                    <form class="form-horizontal" method="POST" style = "padding-top:20px;margin-left:39px;">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          <label for="exampleFormControlInput1">username</label>
+                          <input type="text" class="form-control" id="username" name="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlInput1">Tel</label>
+                            <input type="text" class="form-control" id="Telphone" name="Telphone">
+                        </div>
+                        <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
+                            <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">确认修改</button>
+                        </div>
+                      </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

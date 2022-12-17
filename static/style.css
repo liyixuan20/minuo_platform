@@ -1,0 +1,58 @@
+.green {
+    background-color: green;
+}
+
+.main {
+    margin: 30px;
+}
+
+.right-border {
+    border-right: 1px solid;
+}
+
+h1, h3 {
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    margin: 30px;
+}
+
+table tr {
+    border-bottom: solid 1px #eee;
+    /* cursor: pointer; */
+}
+
+table tr:hover {
+    background-color: #d4f0fd;
+}
+
+table th,
+table td {
+    text-align: center;
+    width: 25%;
+    padding: 15px 0;
+}
+
+table td.icon {
+    background-size: 35px;
+    background-position: left 5px center;
+    background-repeat: no-repeat;
+    padding-left: 30px;
+}
+
+.t7 th, .t7 td {
+    width: 14.28%;
+}
+
+
+p {
+    margin: 20px auto;
+}
+
+textarea {
+    width: 100%;
+}
