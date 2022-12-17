@@ -534,4 +534,4 @@ docker部署：`from .models import *, from .database import Base, SessionLocal`
 ## 其他
 
 在整体流程控制上，我们认为发布者是可信的，领取者是不可信的。领取者可能领取任务之后一直不做 or 乱做，发布者有权拒绝领取者的提交或者在用户提交之前终止任务，将任务回溯到新发布的状态。
->>>>>>> 9fc6bd6 (1)
+
