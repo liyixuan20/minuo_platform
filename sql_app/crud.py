@@ -1,4 +1,4 @@
-from models import *
+from .models import *
 from django.contrib.auth.models import User
 session = SessionLocal()
 
@@ -103,10 +103,16 @@ def change_profile_name(user_id, nickname):
     #修改用户档案中的昵称
     profile = session.query(Profile).filter(Profile.user_id == user_id)
     profile.update({Profile.nickname: nickname})
-
+    session.commit()
+    
 def change_profile_tel(user_id, tel):
     #修改用户档案中的电话
-    profile = session.query(Profile).filter(Profile.tel == tel)
+    profile = session.query(Profile).filter(Profile.user_id == user_id)
     profile.update({Profile.tel:tel})
     session.commit()
 
+def change_profile_points(user_id, points):
+    #修改用户档案中的电话
+    profile = session.query(Profile).filter(Profile.user_id == user_id)
+    profile.update({Profile.points:points})
+    session.commit()

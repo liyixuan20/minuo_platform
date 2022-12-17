@@ -1,4 +1,4 @@
-from database import Base, SessionLocal
+from .database import Base, SessionLocal
 
 
 Profile = Base.classes.profile

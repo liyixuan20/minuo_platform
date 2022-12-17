@@ -134,14 +134,3 @@ MEDIA_URL = 'media_url/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-#email verify
-EMAIL_HOST = "smtp.qq.com"
-EMAIL_PROT = 25
-EMAIL_HOST_USER = "2454539173@qq.com"
-EMAIL_HOST_PASSWORD = ""#todo
-EMAIL_USE_TLS = True
-EMAIL_FROM = "2454539173@qq.com"
-email_title = "米诺众包平台邮箱验证"
-

@@ -1,26 +1,4 @@
 {% extends 'base.html' %}
-<<<<<<< HEAD
-
-{% block navlist %}
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'index' %}">主页</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'list' %}">任务列表</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'upload' %}">发布任务</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'profile' %}">个人中心</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="#">退出登录</a>
-</li>
-{% endblock %}
-
-{% block content %}
-=======
 {% block title %}RequestList{% endblock %}
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-light justify-content-between sticky-top" style="background: linear-gradient(to right,thistle,cornsilk,#e3f2fd);">
@@ -64,9 +42,88 @@
         </ul>
     </div>
 </nav>
->>>>>>> 14a4d42 (1)
 
 <h3>任务一览</h3>
+<div class="panel-group" id="accordion">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" 
+				   href="#collapseOne" style="text-decoration:none;color:rgb(127, 195, 255)">
+					任务类型
+				</a>
+			</h4>
+		</div>
+		<div id="collapseOne" class="panel-collapse collapse in">
+			<div class="panel-body">
+				<div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                    <label class="form-check-label" for="defaultCheck1">
+                      Default checkbox
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+                    <label class="form-check-label" for="defaultCheck2">
+                      Disabled checkbox
+                    </label>
+                  </div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" 
+				   href="#collapseTwo">
+					点击我进行展开，再次点击我进行折叠。第 2 部分
+				</a>
+			</h4>
+		</div>
+		<div id="collapseTwo" class="panel-collapse collapse">
+			<div class="panel-body">
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson 
+				cred nesciunt sapiente ea proident. Ad vegan excepteur butcher 
+				vice lomo.
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" 
+				   href="#collapseThree">
+					点击我进行展开，再次点击我进行折叠。第 3 部分
+				</a>
+			</h4>
+		</div>
+		<div id="collapseThree" class="panel-collapse collapse">
+			<div class="panel-body">
+				Nihil anim keffiyeh helvetica, craft beer labore wes anderson 
+				cred nesciunt sapiente ea proident. Ad vegan excepteur butcher 
+				vice lomo.
+			</div>
+		</div>
+	</div>
+</div>
+  <!-- <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+        test
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+            <label class="form-check-label" for="defaultCheck1">
+              Default checkbox
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+            <label class="form-check-label" for="defaultCheck2">
+              Disabled checkbox
+            </label>
+        </div>
+    </div>
+  </div> -->
+
 <table>
     <tr>
         <th>id</th>
@@ -84,8 +141,4 @@
     {% endfor %}
 </table>
 
-<<<<<<< HEAD
 {% endblock %}
-=======
-{% endblock %}
->>>>>>> 14a4d42 (1)
