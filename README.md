@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # README
 
 ## 用docker-compose的开发流程
