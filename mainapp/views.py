@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
 
 from sql_app.crud import *
+<<<<<<< HEAD
 from sql_app.mission_files import *
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -10,6 +11,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse
 import re
+=======
+>>>>>>> a29e4f55d232985d91afca18827cfc20414368ed
 
 def listfunc(request):
     # TODO: 列出所有任务，支持按状态筛选，按时间排序
@@ -134,6 +137,7 @@ def setProfilefunc(request):
 
 def UploadFileForm(request):
     return
+<<<<<<< HEAD
 
 
 # ---------------------邮箱验证--------------------------------
@@ -210,3 +214,5 @@ def VerifyEmail(request):
             return HttpResponse('激活邮箱失败')
         
         return redirect('profile')
+=======
+>>>>>>> a29e4f55d232985d91afca18827cfc20414368ed
