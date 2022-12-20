@@ -67,6 +67,8 @@ def new_file(filename, root, user_id, task_id):
     
 def upload_file(filename, username, user_id, task_state, task_id, file_base64):
     #先检查是否已经新建了文件
+    #task_state 0表示领取的任务 1表示创建的任务
+    create_new_user_filefolder(user_id, username)
     root = get_file_root(user_id, username, task_state)
     new_file(filename, root, user_id, task_id)
     
@@ -104,6 +106,7 @@ def download_file(filename, username, user_id, task_state, task_id):
    
 
 def get_task_filename(user_id, task_id):
+    #根据task id获取用户创建的文件名
     tsk = session.query(Task_files).filter(Task_files.user_id == user_id, Task_files.task_id == task_id).one()
     return tsk.file_name
 
