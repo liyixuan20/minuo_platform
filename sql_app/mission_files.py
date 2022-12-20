@@ -1,6 +1,6 @@
-from models import *
+from .models import *
 from django.contrib.auth.models import User
-from database import Task_files
+from .database import Task_files
 import re
 import os
 import base64
