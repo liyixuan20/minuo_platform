@@ -4,6 +4,15 @@ from django.contrib.auth import authenticate, logout, login
 
 from sql_app.crud import *
 
+from sql_app.mission_files import *
+
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from django.conf import settings
+from django.core.mail import send_mail
+from django.http import HttpResponse, JsonResponse
+import re
+
+
 
 def listfunc(request):
     # TODO: 列出所有任务，支持按状态筛选，按时间排序
@@ -155,3 +164,81 @@ def setProfilefunc(request):
 def UploadFileForm(request):
     
     return
+
+
+
+# ---------------------邮箱验证--------------------------------
+#验证成功的user is_active = 1
+def generate_verify_email_url(user):
+
+    EMAIL_VERIFY_URL = 'http://82.157.251.139:3306/emails/verification'
+    s = Serializer(settings.SECRET_KEY, 60 * 60 * 24)
+    data = {'user_id' : user.id, 'email' : user.email}
+    token = s.dumps(data)
+    print(type(token))
+    return EMAIL_VERIFY_URL + '?token=' + token.decode()
+
+def check_verify_email_token(token):
+    s = Serializer(settings.SECRET_KEY, 60 * 60 * 24)
+    try:
+        data = s.loads(token)
+    except :
+        return None
+    else:
+        user_id = data.get('user_id')
+        email = data.get('email')
+        try:
+            user = User.objects.get(id = user_id, email = email)
+        except User.DoesNotExist:
+            return None
+        else:
+            return user
+
+def send_verify_email(emails, verify_url):
+    subject = "米诺众包平台邮箱验证"
+    html_message = '<p>您的邮箱为：%s,请点击链接激活邮箱</p>'\
+                   '<p><a href = "%s">%s</a></p>' %(emails, verify_url, verify_url)
+    try:
+        send_mail(subject, '', settings.EMAIL_FROM, [emails], html_message = html_message)
+    except  Exception as e:
+        print(e)
+
+
+def EmailReceive(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        username = request.POST['username']
+        if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
+            return HttpResponse('邮箱格式错误')
+
+        try:
+            user = User.objects.get(username = username)
+            user.email = email
+            user.save()
+        except Exception as e:
+            return HttpResponse('user error')
+        verify_url = generate_verify_email_url(user)  
+
+        send_verify_email(email, verify_url)
+
+        return JsonResponse({'code':200, 'errmsg':'ok'})
+    else:
+        HttpResponse('未接收到邮箱')
+    
+def VerifyEmail(request):
+    if request.method == 'GET':
+        token = request.GET['token']
+
+        if not token:
+            return HttpResponse('缺少token参数')
+        user = check_verify_email_token(token)
+        if not user:
+            return HttpResponse('无效token')
+        try:
+            user.is_active = True
+            user.save()
+        except Exception as e:
+            return HttpResponse('激活邮箱失败')
+        
+        return redirect('profile')
+
