@@ -18,8 +18,8 @@ def listfunc(request):
     # TODO: 列出所有任务，支持按状态筛选，按时间排序
     username = request.user
     user = User.objects.get(username=username)
-    tasks = get_task_by_id(user.id)
-    print("tasks:",tasks)
+    # tasks = get_task_by_id(user.id)
+    # print("tasks:",tasks)
     objs = {
         # "tasks":tasks,
     }
