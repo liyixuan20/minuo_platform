@@ -52,7 +52,38 @@
         </div>
     </nav>
     <div>
-        
+        {% if step == 1 %}
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+        </div>
+        <form class="form-horizontal" method="POST" style = "padding-top:20px;margin-left:39px;">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="exampleFormControlInput1">taskname</label>
+              <input type="text" class="form-control" id="taskname" name="taskname">
+            </div>
+            <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
+                <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">下一步</button>
+            </div>
+        </form>
+        {% else %}
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+        </div>
+        <form class="form-horizontal" method="POST" style = "padding-top:20px;margin-left:39px;">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="exampleFormControlInput1">reward points</label>
+                <input type="text" class="form-control" id="points" name="points">
+            </div>
+            <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
+                <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">创建任务</button>
+            </div>
+        </form>
+        {% endif %}
+
+
+       
     </div>
 </body>
 

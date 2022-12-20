@@ -4,11 +4,15 @@ from django.contrib.auth import authenticate, logout, login
 
 from sql_app.crud import *
 
+
 def listfunc(request):
     # TODO: 列出所有任务，支持按状态筛选，按时间排序
-
+    username = request.user
+    user = User.objects.get(username=username)
+    tasks = get_task_by_id(user.id)
+    print("tasks:",tasks)
     objs = {
-
+        # "tasks":tasks,
     }
     return render(request, 'list.html', objs)
 
@@ -22,6 +26,8 @@ def profilefunc(request):
     # print(user.username)
     # print(user.id)
     user_info= get_profile_by_user_id(user.id)
+    user_tasks = get_tasks_by_owner_id(user.id)
+    print("user_tasks",user_tasks)
     print(user_info)
     print("tel:",user_info.tel)
     # print("points",user_info.points)
@@ -29,6 +35,7 @@ def profilefunc(request):
     objs = {
         "username": user_info.nickname,
         "tel":tel,
+        "myTasks":user_tasks
     }
     return render(request, 'profile.html', objs)
 
@@ -102,7 +109,27 @@ def upload_file(request):
     #         return render(request, "upload.html", {"message": "OK"})
     # else:
     #     form = UploadFileForm()
-    return render(request, 'upload.html', {})
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    # user_info= get_profile_by_user_id(user.id)
+    step = 1
+    global  taskname
+    # print(user.id)
+    if request.POST and 'taskname' in request.POST:
+        taskname = request.POST['taskname']
+        # points = request.POST['points']
+        print(taskname)
+        step=2
+        # print(points)
+    elif request.POST and 'points' in request.POST:
+        points = request.POST['points']
+        print(points)
+        create_task(user.id,taskname,points)
+        return redirect('profile')
+    objs = {
+       "step":step,
+    }
+    return render(request, 'upload.html', objs)
 
 def setProfilefunc(request):
     user_name = request.user
@@ -126,4 +153,5 @@ def setProfilefunc(request):
     return render(request, 'setProfile.html',objs)
 
 def UploadFileForm(request):
+    
     return
