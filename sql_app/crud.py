@@ -5,8 +5,7 @@ session = SessionLocal()
 def get_profile_by_user_id(user_id):
     return session.query(Profile).filter(Profile.user_id == user_id).one()
 
-def get_task_by_id(user_id):
-    return session.query(Task).filter(Task.id == user_id).one()
+
 
 def get_tasks_by_owner_id(owner_id):
     return session.query(Task).filter(Task.owner_id == owner_id).all()
@@ -116,3 +115,14 @@ def change_profile_points(user_id, points):
     profile = session.query(Profile).filter(Profile.user_id == user_id)
     profile.update({Profile.points:points})
     session.commit()
+
+def get_all_task():
+    #返回已创建的所有任务
+    tsk = session.query(Task).all()
+    return tsk
+
+def get_taskid_by_name(name):
+    #根据任务名返回任务id
+    tsk = session.query(Task).filter(Task.name == name).one()
+    return tsk.id
+
