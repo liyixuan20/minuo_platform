@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse
 import re
-
+import base64
 
 
 def listfunc(request):
@@ -111,7 +111,7 @@ def detailfunc(request, pk):
     }
     return render(request, 'detail.html', objs)
 
-def upload_file(request):
+def front_upload_file(request):
 
     # if request.method == 'POST':
     #     # TODO: 上传任务文件
@@ -120,6 +120,8 @@ def upload_file(request):
     #     form = UploadFileForm()
     user_name = request.user
     user = User.objects.get(username = user_name)
+    print("user_name:",user_name)
+    print("user.username",user.username)
     # user_info= get_profile_by_user_id(user.id)
     step = 1
     global  taskname
@@ -128,12 +130,26 @@ def upload_file(request):
         taskname = request.POST['taskname']
         # points = request.POST['points']
         print(taskname)
-        step=2
-        # print(points)
-    elif request.POST and 'points' in request.POST:
         points = request.POST['points']
         print(points)
         create_task(user.id,taskname,points)
+        step=2
+        # print(points)
+    elif request.POST:
+        file = request.FILES.get("taskfile",None)
+        file_name = file.name
+        print(file_name)
+        file_data = base64.b64encode(file.read())
+        file_url =  'data:image/png;base64,{}'.format(file_data)
+        file_url =  file_url.replace("b'",'').replace("'", '')
+        res = {"status": 0, "msg": "图片上传成功", "file_path":file_url}
+        task_id = get_taskid_by_name(taskname)
+        create_new_user_filefolder(user.id,user.username)
+        #filename, username, user_id, task_state, task_id, file_base64
+        upload_file(file_name,user.username,user.id,1,task_id,file_data)
+        # with open(file.name, 'wb') as f:
+        #     for i in file:
+        #         f.write(i)
         return redirect('profile')
     objs = {
        "step":step,
