@@ -21,6 +21,17 @@ docker部署：`from .models import *, from .database import Base, SessionLocal`
 
 记得改，不然会报错
 
+## code码相应状态对应表
+
+| code码 | 对应装填     |
+| ------ | ------------ |
+| 0      | 操作成功     |
+| -1     | 传入参数为空 |
+| -2      | 重复的创建   |
+| -3 | 文件上传/下载失败 |
+
+
+
 ## API
 
 ### API列表
