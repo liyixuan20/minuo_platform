@@ -19,7 +19,7 @@ def get_requests_by_task(task_id):
 
 def create_profile(user_id):
     pro = session.query(Profile).filter(Profile.user_id == user_id).one_or_none()
-    if pro == None:
+    if pro != None:
         return -2
     pf = Profile(user_id=user_id)
     session.add(pf)
@@ -29,7 +29,7 @@ def create_profile(user_id):
 def create_task(owner_id, name, reward):
     #先查询task是否已经存在
     tk = session.query(Task).filter(Task.name == name, Task.owner_id == owner_id).one_or_none()
-    if tk == None:
+    if tk != None:
         return -2
     tsk = Task(owner_id=owner_id, name=name, reward=reward)
     session.add(tsk)
