@@ -45,6 +45,11 @@ def split_path(whole_file_path):
     outputs.append(file)
     return outputs
 
+def get_task_filename(user_id, task_id):
+    #根据task id获取用户创建的文件名
+    tsk = session.query(Task_files).filter(Task_files.user_id == user_id, Task_files.task_id == task_id).one()
+    return tsk.file_name
+
 def new_file(filename, root, user_id, task_id):
     #创建task对应的新文件，注意：一个task只能有一个文件
     
@@ -90,9 +95,9 @@ def upload_file(filename, username, user_id, task_state, task_id, file_base64):
     
     return
 
-def download_file_path(filename, username, user_id, task_state, task_id):
+def download_file_path(username, user_id, task_state, task_id):
     #下载文件
-
+    filename = get_task_filename(user_id, task_id)
     
     root = get_file_root(user_id, username, task_state)
     path = root + '/' + str(task_id) + '/' + filename
@@ -110,10 +115,7 @@ def download_file_path(filename, username, user_id, task_state, task_id):
     return path
    
 
-def get_task_filename(user_id, task_id):
-    #根据task id获取用户创建的文件名
-    tsk = session.query(Task_files).filter(Task_files.user_id == user_id, Task_files.task_id == task_id).one()
-    return tsk.file_name
+
 
 
 

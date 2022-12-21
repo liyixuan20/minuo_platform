@@ -15,5 +15,6 @@ urlpatterns = [
     path('upload/', front_upload_file, name='upload'),
     path('detail/<int:pk>', detailfunc, name='detail'),
     path('emails/',EmailReceive, name = 'emails'),
+    path('file_download/<task_id>/', file_download, name='file_download'),
     re_path(r'^emails/verification/([a-zA-Z0-9]+)/$',VerifyEmail, name = 'Verify'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

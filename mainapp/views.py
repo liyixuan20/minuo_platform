@@ -9,7 +9,7 @@ from sql_app.mission_files import *
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from django.conf import settings
 from django.core.mail import send_mail
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse,Http404, FileResponse
 import re
 import base64
 
@@ -117,14 +117,25 @@ def detailfunc(request, pk):
     tasks = get_tasks_by_owner_id(user.id)
     for task in tasks:
         if task.name == 'wangyuhang_task1':
-            # def download_file_path(filename, username, user_id, task_state, task_id):
-            file_path = download_file_path(task.name,user.username,user.id,1,task.id)
-            print(file_path)
+            # def download_file_path(username, user_id, task_state, task_id):
             objs = {
-                "file":file_path,
                 "task":task
-            }
+            }       #
     return render(request, 'detail.html', objs)
+
+def file_download(request,task_id):
+    username = request.user
+    user = User.objects.get(username = username)
+    #def download_file_path(username, user_id, task_state, task_id):
+    file_path = download_file_path(user.username,user.id,1,task_id)
+    print("file_path",file_path)
+    try:
+        response = FileResponse(open(file_path, 'rb'))
+        response['content_type'] = "application/octet-stream"
+        response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+        return response
+    except Exception:
+        raise Http404
 
 def front_upload_file(request):
 
