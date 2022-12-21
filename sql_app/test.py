@@ -1,4 +1,5 @@
 from crud import *
+from mission_files import *
 
 """
     simple example
@@ -35,6 +36,8 @@ print(f"root accepted task {task_id} finished by carol")
 
 """
     complicated example 
+"""
+
 """
 # root(user_id:2)创建一个task
 print("root(id:2) creating task")
@@ -84,3 +87,7 @@ print(f"carol finished task {task_id}")
 # root验收了task
 accept_task(task_id=task_id)
 print(f"root accepted task {task_id} finished by carol")
+
+"""
+
+new_file('order.pdf','./file_storage/1_minuo/create_tasks',1, 2)

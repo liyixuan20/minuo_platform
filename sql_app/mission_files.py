@@ -1,6 +1,6 @@
 from .models import *
 from django.contrib.auth.models import User
-from .database import Task_files
+
 import re
 import os
 import base64
@@ -11,7 +11,7 @@ def create_new_user_filefolder(user_id, username):
     #创建文件夹
 
     if not os.path.exists('./file_storage/' + str(user_id) + "_" + username):
-        os.makedirs('./file_storage/' + username)
+        os.makedirs('./file_storage/' + str(user_id) + "_" + username)
     else:
         print("filefolder already exist")
         return
