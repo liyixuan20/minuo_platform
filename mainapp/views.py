@@ -18,10 +18,10 @@ def listfunc(request):
     # TODO: 列出所有任务，支持按状态筛选，按时间排序
     username = request.user
     user = User.objects.get(username=username)
-    # tasks = get_task_by_id(user.id)
-    # print("tasks:",tasks)
+    tasks = get_all_task()
+    print("tasks:",tasks)
     objs = {
-        # "tasks":tasks,
+        "tasks":tasks,
     }
     return render(request, 'list.html', objs)
 
@@ -72,7 +72,10 @@ def signupfunc(request):
             # messages.error(request, 'Duplicated user name.')
             message = e
         finally:
-            return render(request, "signup.html", {"message": message})
+            if message == "OK, Please log in.":
+                return redirect('login')
+            else:
+                return render(request, "signup.html", {"message": message})
 
     return render(request, 'signup.html', {})
 
@@ -109,6 +112,22 @@ def detailfunc(request, pk):
     objs = {
 
     }
+    username = request.user
+    user = User.objects.get(username = username)
+    tasks = get_tasks_by_owner_id(user.id)
+    for task in tasks:
+        if task.name == 'task_text16':
+            # def download_file(filename, username, user_id, task_state, task_id):
+            base64_file = download_file(task.name,user.username,user.id,1,task.id)
+            print(task.name) 
+            print(user.username)
+            print(user.id)
+            print(task.id)
+            print(base64_file)
+            objs = {
+                "file":base64_file,
+                "task":task
+            }
     return render(request, 'detail.html', objs)
 
 def front_upload_file(request):
@@ -143,7 +162,7 @@ def front_upload_file(request):
         file_url =  'data:image/png;base64,{}'.format(file_data)
         file_url =  file_url.replace("b'",'').replace("'", '')
         res = {"status": 0, "msg": "图片上传成功", "file_path":file_url}
-        task_id = get_taskid_by_name(taskname)
+        task_id = get_taskid_by_name(user.id,taskname)
         create_new_user_filefolder(user.id,user.username)
         #filename, username, user_id, task_state, task_id, file_base64
         upload_file(file_name,user.username,user.id,1,task_id,file_data)

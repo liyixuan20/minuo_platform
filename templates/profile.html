@@ -96,17 +96,22 @@
                     <h3>我发布的</h3>
                     <table>
                         <tr>
-                            <th>id</th>
-                            <th>name</th>
-                            <th>reward</th>
-                            <th>create_at</th>
+                            <th>任务id</th>
+                            <th>任务名称</th>
+                            <th>任务报酬PT</th>
+                            <th>任务状态</th>
+                            <th>创建时间</th>
                         </tr>
                         {% for t in myTasks %}
                         <tr>
                             <td>{{ t.id }}</td>
                             <td><a href="{% url 'detail' t.id%}">{{ t.name }}</a></td>
                             <td>{{ t.reward }}</td>
+                            <td> 
+                                <span class="badge badge-primary">未被领取</span>
+                            </td>
                             <td>{{ t.create_at }}</td>
+                            <td><button type="button" class="btn btn-outline-danger">取消任务</button><td>
                         </tr>
                         {% endfor %}
                     </table>

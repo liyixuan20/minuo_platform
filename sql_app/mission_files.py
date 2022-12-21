@@ -92,15 +92,20 @@ def upload_file(filename, username, user_id, task_state, task_id, file_base64):
 def download_file(filename, username, user_id, task_state, task_id):
     #下载文件
     root = get_file_root(user_id, username, task_state)
-    try:
-        f = open(root + '/' + str(task_id) + '/' + filename, encoding='utf-8')
-        content = f.read()
-        f.close()
-        output = base64.b64encode(content.encode()).decode()
-        return output
-    except Exception:
-        print("download error")
-        return -3
+    print("root:",root)
+    # try:
+    print("start try")
+    f = open(root + '/' + str(task_id) + '/' + filename,'w', encoding='utf-8')
+    print("open success")
+    content = f.read()
+    print("read success")
+    f.close()
+    print("file:",f)
+    output = base64.b64encode(content.encode()).decode()
+    return output
+    # except Exception:
+    #     print("download error")
+    #     return -3
     
     
    
