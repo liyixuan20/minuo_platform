@@ -77,7 +77,7 @@ def upload_file(filename, username, user_id, task_state, task_id, file_base64):
         file_content = base64.b64decode(file_base64).decode()
     except Exception:
         print("decode error")
-        return
+        return -3
     
     try:
         f = open(root + '/' + str(task_id) + '/' + filename, 'w', encoding='utf-8')
@@ -85,7 +85,7 @@ def upload_file(filename, username, user_id, task_state, task_id, file_base64):
         f.close()
     except Exception:
         print("file write error")
-        return
+        return -3
     
     return
 
@@ -100,7 +100,7 @@ def download_file(filename, username, user_id, task_state, task_id):
         return output
     except Exception:
         print("download error")
-        return -1
+        return -3
     
     
    

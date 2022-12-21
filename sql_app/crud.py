@@ -18,11 +18,19 @@ def get_requests_by_task(task_id):
     return session.query(Request).filter(Request.task_id==task_id).all()
 
 def create_profile(user_id):
+    pro = session.query(Profile).filter(Profile.user_id == user_id).one_or_none()
+    if pro == None:
+        return -2
     pf = Profile(user_id=user_id)
     session.add(pf)
     session.commit()
+    return 0
 
 def create_task(owner_id, name, reward):
+    #先查询task是否已经存在
+    tk = session.query(Task).filter(Task.name == name, Task.owner_id == owner_id).one_or_none()
+    if tk == None:
+        return -2
     tsk = Task(owner_id=owner_id, name=name, reward=reward)
     session.add(tsk)
     session.commit()
@@ -121,8 +129,16 @@ def get_all_task():
     tsk = session.query(Task).all()
     return tsk
 
-def get_taskid_by_name(name):
+def get_taskid_by_name(owner_id, name):
     #根据任务名返回任务id
-    tsk = session.query(Task).filter(Task.name == name).one()
+    tsk = session.query(Task).filter(Task.name == name, Task.owner_id == owner_id).one()
     return tsk.id
 
+def delete_task_by_id(task_id):
+    #删除特定task
+    session.query(Task).filter(Task.id == task_id).delete()
+    session.commit()
+
+def delete_all_task():
+    #删除所有task（测试用功能）
+    session.query(Task).delete()
