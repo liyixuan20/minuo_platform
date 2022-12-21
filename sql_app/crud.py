@@ -15,7 +15,17 @@ def get_tasks_by_receiver_id(user_id):
     return q.filter(Receive.user_id==user_id).all()
 
 def get_requests_by_task(task_id):
+    #返回某任务的所有请求
     return session.query(Request).filter(Request.task_id==task_id).all()
+
+def get_task_request_by_user_id(user_id):
+    #根据用户id返回该用户的所有用户请求
+    req = session.query(Request).filter(Request.user_id == user_id).all()
+    return req
+def get_task_state(task_id):
+    #返回任务状态（1：已领取， 2：已完成， 3：发布方已接收并结算）
+    tsk =session.query(Task).filter(Task.id == task_id).one_or_none()
+    return tsk.status
 
 def create_profile(user_id):
     pro = session.query(Profile).filter(Profile.user_id == user_id).one_or_none()
@@ -142,3 +152,4 @@ def delete_task_by_id(task_id):
 def delete_all_task():
     #删除所有task（测试用功能）
     session.query(Task).delete()
+
