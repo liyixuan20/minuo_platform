@@ -107,20 +107,18 @@ def uploadfunc(request):
     return render(request, 'upload.html', {})
 
 
-def detailfunc(request, pk):
+def detailfunc(request, task_id):
     # TODO: 任务详情
     objs = {
         "file":"filepath",
     }
     username = request.user
     user = User.objects.get(username = username)
-    tasks = get_tasks_by_owner_id(user.id)
-    for task in tasks:
-        if task.name == 'wangyuhang_task1':
-            # def download_file_path(username, user_id, task_state, task_id):
-            objs = {
-                "task":task
-            }       #
+    task = get_task_by_task_id(task_id)
+    # def download_file_path(username, user_id, task_state, task_id):
+    objs = {
+        "task":task
+    }
     return render(request, 'detail.html', objs)
 
 def file_download(request,task_id):

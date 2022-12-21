@@ -139,6 +139,10 @@ def get_all_task():
     tsk = session.query(Task).all()
     return tsk
 
+def get_task_by_task_id(task_id):
+    #根据id返回task
+    return session.query(Task).filter(Task.id == task_id).one_or_none()
+
 def get_taskid_by_name(owner_id, name):
     #根据任务名返回任务id
     tsk = session.query(Task).filter(Task.name == name, Task.owner_id == owner_id).one()
