@@ -14,10 +14,12 @@ h1, h3 {
     text-align: center;
 }
 
-table {
+#missions_released,
+#verified_info
+{
     border-collapse: collapse;
     border-spacing: 0;
-    width: 100%;
+    width:95%;
     margin: 30px;
 }
 
@@ -33,7 +35,7 @@ table tr:hover {
 table th,
 table td {
     text-align: center;
-    width: 25%;
+    width:20%;
     padding: 15px 0;
 }
 

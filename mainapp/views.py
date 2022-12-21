@@ -110,22 +110,18 @@ def uploadfunc(request):
 def detailfunc(request, pk):
     # TODO: 任务详情
     objs = {
-
+        "file":"filepath",
     }
     username = request.user
     user = User.objects.get(username = username)
     tasks = get_tasks_by_owner_id(user.id)
     for task in tasks:
-        if task.name == 'task_text16':
-            # def download_file(filename, username, user_id, task_state, task_id):
-            base64_file = download_file(task.name,user.username,user.id,1,task.id)
-            print(task.name) 
-            print(user.username)
-            print(user.id)
-            print(task.id)
-            print(base64_file)
+        if task.name == 'wangyuhang_task1':
+            # def download_file_path(filename, username, user_id, task_state, task_id):
+            file_path = download_file_path(task.name,user.username,user.id,1,task.id)
+            print(file_path)
             objs = {
-                "file":base64_file,
+                "file":file_path,
                 "task":task
             }
     return render(request, 'detail.html', objs)
