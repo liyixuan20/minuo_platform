@@ -30,7 +30,7 @@ def delete_user_filefolder(user_id, user_name):
 
 def get_file_root(user_id, username, task_state): # task_state:是领取的任务还是创建的任务
 
-    if(task_state == 0):#领取的任务
+    if(task_state == 0):#创建的任务
         taskfile = "create_tasks"
     elif(task_state == 1):
         taskfile = "receive_tasks"
@@ -52,7 +52,7 @@ def new_file(filename, root, user_id, task_id):
         os.makedirs(root + '/' + str(task_id))
 
     if os.path.exists(root + '/' + str(task_id) + '/' + filename):
-        return
+        return 
     #更新到数据库中
     tsk = Task_files(task_id = task_id, user_id = user_id, file_name = filename)
     session.add(tsk)
@@ -62,6 +62,7 @@ def new_file(filename, root, user_id, task_id):
         f.close()
     except Exception:
         print("create_file error!")
+        return 
     
     return
     
@@ -89,25 +90,24 @@ def upload_file(filename, username, user_id, task_state, task_id, file_base64):
     
     return
 
-def download_file(filename, username, user_id, task_state, task_id):
+def download_file_path(filename, username, user_id, task_state, task_id):
     #下载文件
+
+    
     root = get_file_root(user_id, username, task_state)
-    print("root:",root)
-    # try:
-    print("start try")
-    f = open(root + '/' + str(task_id) + '/' + filename,'w', encoding='utf-8')
-    print("open success")
-    content = f.read()
-    print("read success")
-    f.close()
-    print("file:",f)
-    output = base64.b64encode(content.encode()).decode()
-    return output
-    # except Exception:
-    #     print("download error")
-    #     return -3
-    
-    
+    path = root + '/' + str(task_id) + '/' + filename
+    """
+    try:
+        f = open(root + '/' + str(task_id) + '/' + filename, encoding='utf-8')
+        content = f.read()
+        f.close()
+        output = base64.b64encode(content.encode()).decode()
+        return output
+    except FileNotFoundError:
+        print("download error")
+        return -3
+    """
+    return path
    
 
 def get_task_filename(user_id, task_id):
