@@ -10,13 +10,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="..">主页</a>
+                <a class="nav-link" href="../..">主页</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../list/">任务中心</a>
+                <a class="nav-link" href="../../list/">任务中心</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../upload/">创建任务</a>
+                <a class="nav-link" href="../../upload/">创建任务</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">帮助</a>
@@ -34,22 +34,27 @@
                 justify-content: center;
                 overflow: hidden;"></li>
             <li class="nav-item">
-                <a class="nav-link" href="../profile/">{{ user.username }}</a>
+                <a class="nav-link" href="../../profile/">{{ user.username }}</a>
             </li>  
             <li class="nav-item">
-                <a class="nav-link" href="../signup/">注册</a>
+                <a class="nav-link" href="../../signup/">注册</a>
             </li>
         </ul>
     </div>
 </nav>
 <div>
-    <h1>{{task.name}}</h1>
-    <p style="width:70%;font-size: large;word-wrap: break-word;display: block;margin: 0 auto;">222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222</p>
-    <div style="padding-top:15px;margin-left:3px;margin-right:42px;display: flex;">
-        <a href="../file_download/{{ task.id }}/" style="height:50px;width:40%;display: block;margin-right:10%;margin-left: 15%;"><button class="btn btn-outline-primary" >下载任务文件</button></a>
-        <a href="../task_request/{{ task.id }}/" style="height:50px;width:40%;display: block;margin-right:10%;margin-left: 15%;"><button type="button" class="btn btn-outline-success" style="display: block;width:20%;">申请任务</button></a>
-    </div>
-    {{ file }}
+    <h>上传任务标注文件</h>
+    <form class="form-horizontal" method="POST" enctype="multipart/form-data" style = "padding-top:20px;margin-left:39px;">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="exampleFormControlInput1">task file</label>
+            <input type="file" class="form-control" id="taskfile" name="taskfile">
+        </div>
+        <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
+            <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">创建任务</button>
+        </div>
+    </form>
+    <a href="../../task_upload_finish/{{req_id}}/"><button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">结束任务</button></a>
 </div>
 
 {% endblock %}

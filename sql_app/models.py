@@ -18,11 +18,19 @@ class Task_files(bases):
     id = Column(Integer, primary_key = True)
     task_id = Column(Integer)
     user_id = Column(Integer)
+    rec_or_create = Column(Integer)
     file_name = Column(String(32))
     create_time = Column(DateTime, default = datetime.now())
 
     def _repr_(self):
         return "<Task_files(id = '%s',task_id = '%s', user_id = '%s', file_name = '%s')>" % (self.id, self.task_id, self.user_id, self.file_name)
+class Portrait_files(bases):
+    __tablename__ = 'portrait'
+    id = Column(Integer, primary_key = True)
+    user_id = Column(Integer)
+    file_name = Column(String(32))
+    create_time = Column(DateTime, default = datetime.now())    
+
 
 # print(Base.classes.keys())
 if __name__ == '__main__':

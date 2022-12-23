@@ -45,12 +45,12 @@ def split_path(whole_file_path):
     outputs.append(file)
     return outputs
 
-def get_task_filename(user_id, task_id):
+def get_task_filename(user_id, task_id, task_state):
     #根据task id获取用户创建的文件名
-    tsk = session.query(Task_files).filter(Task_files.user_id == user_id, Task_files.task_id == task_id).one()
+    tsk = session.query(Task_files).filter(Task_files.user_id == user_id, Task_files.task_id == task_id, Task_files.rec_or_create == task_state).one()
     return tsk.file_name
 
-def new_file(filename, root, user_id, task_id):
+def new_file(filename, root, user_id, task_id, task_state):
     #创建task对应的新文件，注意：一个task只能有一个文件
     
     if not os.path.exists(root + '/' + str(task_id)):
@@ -59,7 +59,7 @@ def new_file(filename, root, user_id, task_id):
     if os.path.exists(root + '/' + str(task_id) + '/' + filename):
         return 
     #更新到数据库中
-    tsk = Task_files(task_id = task_id, user_id = user_id, file_name = filename)
+    tsk = Task_files(task_id = task_id, user_id = user_id, file_name = filename, rec_or_create = task_state)
     session.add(tsk)
     session.commit()
     try:
@@ -71,33 +71,52 @@ def new_file(filename, root, user_id, task_id):
     
     return
     
-def upload_file(filename, username, user_id, task_state, task_id, file_base64):
+def upload_file(filename, username, user_id, task_state, task_id, file):
     #先检查是否已经新建了文件
     #task_state 0表示领取的任务 1表示创建的任务
     create_new_user_filefolder(user_id, username)
     root = get_file_root(user_id, username, task_state)
-    new_file(filename, root, user_id, task_id)
+    new_file(filename, root, user_id, task_id, task_state)
     
     file_content = ''
-    try:
-        file_content = base64.b64decode(file_base64).decode()
-    except Exception:
-        print("decode error")
-        return -3
-    
-    try:
-        f = open(root + '/' + str(task_id) + '/' + filename, 'w', encoding='utf-8')
-        f.write(file_content)
-        f.close()
-    except Exception:
-        print("file write error")
-        return -3
+    # file_content = file.read()
+    # try:
+    #     file_content = base64.b64decode(file_base64).decode()
+    # except Exception:
+    #     print("decode error")
+    #     return -3
+    f = open(root + '/' + str(task_id) + '/' + filename, 'wb')
+    print("f open success")
+    file_content = file.read()
+    print("file read success")
+    # print(file_content)
+    f.write(file_content)
+        # for i in file:
+        #     print(i)
+        #     f.write(i)
+    print("f write success")
+    f.close()
+    # try:
+    #     f = open(root + '/' + str(task_id) + '/' + filename, 'w+')
+    #     print("f open success")
+    #     file_content = file.read()
+    #     print("file read success")
+    #     print(file_content)
+    #     f.write(file_content)
+    #     # for i in file:
+    #     #     print(i)
+    #     #     f.write(i)
+    #     print("f write success")
+    #     f.close()
+    # except Exception:
+    #     print("file write error")
+    #     return -3
     
     return
 
 def download_file_path(username, user_id, task_state, task_id):
     #下载文件
-    filename = get_task_filename(user_id, task_id)
+    filename = get_task_filename(user_id, task_id,task_state)
     
     root = get_file_root(user_id, username, task_state)
     path = root + '/' + str(task_id) + '/' + filename
@@ -119,10 +138,10 @@ def download_file_path(username, user_id, task_state, task_id):
 
 
 
-def delete_file(filename, root, user_id, task_id):
+def delete_file(filename, root, user_id, task_id, task_state):
     try:
         os.remove(root+ '/' + str(task_id) + '/' + filename)
-        session.query(Task_files).filter(Task_files.task_id == task_id, Task_files.user_id == user_id).delete()
+        session.query(Task_files).filter(Task_files.task_id == task_id, Task_files.user_id == user_id, Task_files.rec_or_create == task_state).delete()
         session.commit()
     except Exception:
         print("delete file error")

@@ -36,6 +36,7 @@ def profilefunc(request):
     # print(user.id)
     user_info= get_profile_by_user_id(user.id)
     user_tasks = get_tasks_by_owner_id(user.id)
+    request_tasks = get_request_task_info(user.id)
     print("user_tasks",user_tasks)
     print(user_info)
     print("tel:",user_info.tel)
@@ -44,8 +45,11 @@ def profilefunc(request):
     objs = {
         "username": user_info.nickname,
         "tel":tel,
-        "myTasks":user_tasks
+        "myTasks":user_tasks,
+        "requests": request_tasks,
+        "points":user_info.points
     }
+
     return render(request, 'profile.html', objs)
 
 
@@ -118,7 +122,21 @@ def detailfunc(request, task_id):
     # def download_file_path(username, user_id, task_state, task_id):
     objs = {
         "task":task
+    }       #
+    return render(request, 'detail.html', objs)
+
+def detail_request_func(request, pk):
+    # TODO: 任务详情
+    objs = {
+        "file":"filepath",
     }
+    username = request.user
+    user = User.objects.get(username = username)
+    task = get_task_by_task_id(pk)
+            # def download_file_path(username, user_id, task_state, task_id):
+    objs = {
+        "task":task
+    }       #
     return render(request, 'detail.html', objs)
 
 def file_download(request,task_id):
@@ -134,6 +152,79 @@ def file_download(request,task_id):
         return response
     except Exception:
         raise Http404
+    
+def file_download_2(request,task_id):
+    username = request.user
+    user = User.objects.get(username = username)
+    #def download_file_path(username, user_id, task_state, task_id):
+    file_path = download_file_path(user.username,user.id,0,task_id)
+    print("file_path",file_path)
+    try:
+        response = FileResponse(open(file_path, 'rb'))
+        response['content_type'] = "application/octet-stream"
+        response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+        return response
+    except Exception:
+        raise Http404
+
+def task_request(request,task_id):
+    
+    objs = {
+        "file":"filepath",
+    }
+    username = request.user
+    user = User.objects.get(username = username)
+    task = get_task_by_task_id(task_id)
+    req_id = request_task(user.id,task_id)
+    print(req_id)
+    # def download_file_path(username, user_id, task_state, task_id):
+    objs = {
+        "task":task
+    }       #
+    return redirect('profile')
+
+def task_request_pass(request,task_id):
+    
+    username = request.user
+    user = User.objects.get(username = username)
+    task_reqs = get_requests_by_task(task_id)
+    objs = {
+        "task_requests":task_reqs,
+    }
+    return render(request, 'task_requests.html', objs)
+    return redirect('profile')
+
+def front_request_pass(request,req_id):
+    allow_request_task(req_id)
+    return redirect('profile')
+
+def front_task_upload(request,req_id):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    obj={
+        "req_id":req_id
+    }
+    if request.POST:
+        file = request.FILES.get("taskfile")
+        file_name = file.name
+        print(file.read())
+        print(file_name)
+        # file_data = base64.b64encode(file.read())
+        # print(file_data)
+        # file_url =  'data:image/png;base64,{}'.format(file_data)
+        # file_url =  file_data.split(',')[1]
+        create_new_user_filefolder(user.id,user.username)
+        #filename, username, user_id, task_state, task_id, file_base64s
+        upload_file(file_name,user.username,user.id,0,req_id,file)
+        # with open(file.name, 'wb') as f:
+        #     for i in file:
+        #         f.write(i)
+        return redirect('profile')
+    return render(request, 'task_upload.html', obj)
+
+def front_task_upload_finish(request,req_id):
+    finish_task(req_id)
+    return redirect('profile')
 
 def front_upload_file(request):
 
@@ -160,17 +251,18 @@ def front_upload_file(request):
         step=2
         # print(points)
     elif request.POST:
-        file = request.FILES.get("taskfile",None)
+        file = request.FILES.get("taskfile")
         file_name = file.name
         print(file_name)
-        file_data = base64.b64encode(file.read())
-        file_url =  'data:image/png;base64,{}'.format(file_data)
-        file_url =  file_url.replace("b'",'').replace("'", '')
-        res = {"status": 0, "msg": "图片上传成功", "file_path":file_url}
+        # file_data = base64.b64encode(file.read())
+        # print(file_data)
+        # file_url =  'data:image/png;base64,/{}'.format(file_data)
+        # file_url =  file_url.split(',')[1]
+        # res = {"status": 0, "msg": "图片上传成功", "file_path":file_url}
         task_id = get_taskid_by_name(user.id,taskname)
         create_new_user_filefolder(user.id,user.username)
         #filename, username, user_id, task_state, task_id, file_base64
-        upload_file(file_name,user.username,user.id,1,task_id,file_data)
+        upload_file(file_name,user.username,user.id,1,task_id,file)
         # with open(file.name, 'wb') as f:
         #     for i in file:
         #         f.write(i)
@@ -179,6 +271,26 @@ def front_upload_file(request):
        "step":step,
     }
     return render(request, 'upload.html', objs)
+
+def task_complete_page(request,task_id):
+    objs={
+        "task_id":task_id
+    }
+    return render(request, 'task_complete.html', objs)
+
+def front_task_cancel(request,task_id):
+    delete_task_by_id(task_id)
+    return redirect('profile')
+
+def task_cancel_request(request,req_id):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    delete_request(req_id,user.id)
+    return redirect('profile')
+
+def front_task_complete(request,task_id):
+    accept_task(task_id)
+    return redirect('profile')
 
 def setProfilefunc(request):
     user_name = request.user

@@ -15,7 +15,8 @@ h1, h3 {
 }
 
 #missions_released,
-#verified_info
+#verified_info,
+#request_list
 {
     border-collapse: collapse;
     border-spacing: 0;

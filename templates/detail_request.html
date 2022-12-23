@@ -43,12 +43,10 @@
     </div>
 </nav>
 <div>
-    <h1>{{task.name}}</h1>
-    <p style="width:70%;font-size: large;word-wrap: break-word;display: block;margin: 0 auto;">222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222</p>
-    <div style="padding-top:15px;margin-left:3px;margin-right:42px;display: flex;">
-        <a href="../file_download/{{ task.id }}/" style="height:50px;width:40%;display: block;margin-right:10%;margin-left: 15%;"><button class="btn btn-outline-primary" >下载任务文件</button></a>
-        <a href="../task_request/{{ task.id }}/" style="height:50px;width:40%;display: block;margin-right:10%;margin-left: 15%;"><button type="button" class="btn btn-outline-success" style="display: block;width:20%;">申请任务</button></a>
-    </div>
+    <h1>{{ task.name }}</h1>
+    <p>任务描述</p>
+    <a href="../file_download/{{ task.id }}/"><button class="btn btn-primary btn-block"type="submit" >下载任务文件</button></a>
+    <button type="button" class="btn btn-outline-success" >任务申请中</button>
     {{ file }}
 </div>
 
