@@ -19,7 +19,7 @@ def listfunc(request):
     username = request.user
     user = User.objects.get(username=username)
     tasks = get_all_task()
-    print("tasks:",tasks)
+    # print("tasks:",tasks)
     objs = {
         "tasks":tasks,
     }
@@ -37,9 +37,9 @@ def profilefunc(request):
     user_info= get_profile_by_user_id(user.id)
     user_tasks = get_tasks_by_owner_id(user.id)
     request_tasks = get_request_task_info(user.id)
-    print("user_tasks",user_tasks)
-    print(user_info)
-    print("tel:",user_info.tel)
+    # print("user_tasks",user_tasks)
+    # print(user_info)
+    # print("tel:",user_info.tel)
     # print("points",user_info.points)
     tel=user_info.tel
     objs = {
@@ -144,7 +144,7 @@ def file_download(request,task_id):
     user = User.objects.get(username = username)
     #def download_file_path(username, user_id, task_state, task_id):
     file_path = download_file_path(user.username,user.id,1,task_id)
-    print("file_path",file_path)
+    # print("file_path",file_path)
     try:
         response = FileResponse(open(file_path, 'rb'))
         response['content_type'] = "application/octet-stream"
@@ -158,7 +158,7 @@ def file_download_2(request,task_id):
     user = User.objects.get(username = username)
     #def download_file_path(username, user_id, task_state, task_id):
     file_path = download_file_path(user.username,user.id,0,task_id)
-    print("file_path",file_path)
+    # print("file_path",file_path)
     try:
         response = FileResponse(open(file_path, 'rb'))
         response['content_type'] = "application/octet-stream"
@@ -176,7 +176,7 @@ def task_request(request,task_id):
     user = User.objects.get(username = username)
     task = get_task_by_task_id(task_id)
     req_id = request_task(user.id,task_id)
-    print(req_id)
+    # print(req_id)
     # def download_file_path(username, user_id, task_state, task_id):
     objs = {
         "task":task
@@ -207,8 +207,8 @@ def front_task_upload(request,req_id):
     if request.POST:
         file = request.FILES.get("taskfile")
         file_name = file.name
-        print(file.read())
-        print(file_name)
+        # print(file.read())
+        # print(file_name)
         # file_data = base64.b64encode(file.read())
         # print(file_data)
         # file_url =  'data:image/png;base64,{}'.format(file_data)
@@ -235,8 +235,8 @@ def front_upload_file(request):
     #     form = UploadFileForm()
     user_name = request.user
     user = User.objects.get(username = user_name)
-    print("user_name:",user_name)
-    print("user.username",user.username)
+    # print("user_name:",user_name)
+    # print("user.username",user.username)
     # user_info= get_profile_by_user_id(user.id)
     step = 1
     global  taskname
@@ -244,16 +244,16 @@ def front_upload_file(request):
     if request.POST and 'taskname' in request.POST:
         taskname = request.POST['taskname']
         # points = request.POST['points']
-        print(taskname)
+        # print(taskname)
         points = request.POST['points']
-        print(points)
+        # print(points)
         create_task(user.id,taskname,points)
         step=2
         # print(points)
     elif request.POST:
         file = request.FILES.get("taskfile")
         file_name = file.name
-        print(file_name)
+        # print(file_name)
         # file_data = base64.b64encode(file.read())
         # print(file_data)
         # file_url =  'data:image/png;base64,/{}'.format(file_data)
@@ -305,8 +305,8 @@ def setProfilefunc(request):
     if request.POST:
         username = request.POST['username']
         Telphone = request.POST['Telphone']
-        print(username)
-        print(Telphone)
+        # print(username)
+        # print(Telphone)
         change_profile_name(user.id,username)
         change_profile_tel(user.id,Telphone)
         change_profile_points(user.id,20)
