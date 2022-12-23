@@ -15,8 +15,11 @@ def get_tasks_by_receiver_id(user_id):
     return q.filter(Receive.user_id==user_id).all()
 
 def get_requests_by_task(task_id):
+    q = session.query(Request).filter(Request.task_id==task_id).all()
+    if q == None:
+        return -2
     #返回某任务的所有请求
-    return session.query(Request).filter(Request.task_id==task_id).all()
+    return q
 
 def get_task_request_by_user_id(user_id):
     #根据用户id返回该用户的所有用户请求
@@ -47,6 +50,9 @@ def create_task(owner_id, name, reward):
     return tsk.id
 
 def request_task(user_id, task_id):
+    q = session.query(Request).filter(Request.user_id == user_id, Request.task_id == task_id).one_or_none()
+    if q != None:
+        return -2
     # 创建request
     req = Request(user_id=user_id, task_id=task_id)
     session.add(req)
@@ -139,10 +145,6 @@ def get_all_task():
     tsk = session.query(Task).all()
     return tsk
 
-def get_task_by_task_id(task_id):
-    #根据id返回task
-    return session.query(Task).filter(Task.id == task_id).one_or_none()
-
 def get_taskid_by_name(owner_id, name):
     #根据任务名返回任务id
     tsk = session.query(Task).filter(Task.name == name, Task.owner_id == owner_id).one()
@@ -157,3 +159,11 @@ def delete_all_task():
     #删除所有task（测试用功能）
     session.query(Task).delete()
 
+def get_task_by_task_id(task_id):
+    #根据id返回task
+    return session.query(Task).filter(Task.id == task_id).one_or_none()
+
+def get_request_task_info(user_id):
+    req = session.query(Task).join(Request, Task.id == Request.task_id).filter(Request.user_id == user_id).all()
+    return req
+    
