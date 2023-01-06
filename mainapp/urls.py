@@ -29,5 +29,6 @@ urlpatterns = [
     path('task_cancel/<task_id>/', front_task_cancel, name='front_task_cancel'),
     path('task_cancel_request/<req_id>/', task_cancel_request, name='task_cancel_request'),
     re_path(r'^list_ajax/$',list_ajax,name = 'list_ajax'),
+    path('upload_portrait/', portrait_upload, name = 'upload_portrait'),
     re_path(r'^emails/verification/([a-zA-Z0-9]+)/$',VerifyEmail, name = 'Verify'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

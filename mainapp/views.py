@@ -47,15 +47,39 @@ def profilefunc(request):
     # print("tel:",user_info.tel)
     # print("points",user_info.points)
     tel=user_info.tel
+
+    #返回用户头像
+    por = query_portrait(user.id)
+    
+        
     objs = {
         "username": user_info.nickname,
         "tel":tel,
         "myTasks":user_tasks,
         "requests": request_tasks,
-        "points":user_info.points
+        "points":user_info.points,
+        "credits":user_info.credits,
+        "portrait": por
     }
 
     return render(request, 'profile.html', objs)
+
+def portrait_upload(request):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+
+    if request.method == 'POST':
+        
+        file = request.FILES.get("portraitfile")
+        filename = file.name
+        q = query_portrait(user.id)
+        if q != -1:
+            delete_portrait_file(user.id, q.file_name)
+        upload_portrait(user.id, filename, file)
+        return redirect('profile')
+    return render(request, 'upload_portrait.html')
+        
+
 
 
 def hwfunc(request):
@@ -285,14 +309,16 @@ def getQusetByQuestID(questid):
 def front_task_operate(request,req_id):
     user_name = request.user
     user = User.objects.get(username = user_name)
-    task = get_task_by_task_id(req_id)
-    task_description = "这是任务的描述"
-    task_item_num = 5
+    # (username : str, user_id : int, task_id : int) -> quest_list:
+    task = process_quest_files(user.username,user.id,req_id)
+    # task = get_task_by_task_id(req_id)
+    task_description = task.task_info
+    task_item_num = task.quest_num
     task_item_range = []
     quests = []
     for i in range(task_item_num):
         task_item_range.append(i+1)
-        quests.append(getQusetByQuestID(i+1))
+        quests.append(task.get_Quest_by_questID(i+1))
     # print(quests)
     for quest in quests:
         for i in range(quest["quest_option_num"]):
@@ -483,3 +509,4 @@ def VerifyEmail(request):
         
         return redirect('profile')
 
+  

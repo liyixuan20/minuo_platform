@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 import re
 import os
 import base64
+import zipfile
+from typing import List
 
 session = SessionLocal()
 #todo: 文件名是否合法
@@ -149,7 +151,300 @@ def delete_file(filename, root, user_id, task_id, task_state):
     return
 
 
+#--------------------------------上传头像------------------------------------------
+
+def create_user_portrait_file(user_id):
+    if not os.path.exists('./portrait_storage/' + str(user_id)):
+        os.makedirs('./portrait_storage/' + str(user_id))
+    else:
+        print("portrait filefolder already exist")
+        return
+    return 
+ 
+def new_protrait_file(path, user_id, filename):
+    #允许多次上传文件（允许同名）
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+    try:
+        f = open(path + '/' + filename, 'w')
+        f.close()
+    except Exception:
+        print("create_file error!")
+        return 
+    por = Portrait_files(user_id = user_id, file_name = filename)
+    session.add(por)
+    session.commit()
+    return
+
+
+def upload_portrait(user_id, filename, file):
+    create_user_portrait_file(user_id)
+    root = './portrait_storage/' + str(user_id)
+    new_protrait_file(root, user_id, filename)
+    file_content = ''
+    # file_content = file.read()
+    # try:
+    #     file_content = base64.b64decode(file_base64).decode()
+    # except Exception:
+    #     print("decode error")
+    #     return -3
+    f = open(root + '/' + filename, 'wb')
+    print("f open success")
+    file_content = file.read()
+    print("file read success")
+    # print(file_content)
+    f.write(file_content)
+        # for i in file:
+        #     print(i)
+        #     f.write(i)
+    print("f write success")
+    f.close()
+    return
+
+def delete_portrait_file(user_id, filename):
+    try:
+        os.remove('./portrait_storage/' + str(user_id) + '/' + filename)
+        session.query(Portrait_files).filter(Portrait_files.user_id == user_id).delete()
+        session.commit()
+    except Exception:
+        print("delete file error")
+        return
+    return   
+
+def query_portrait(user_id : int) -> str:
+    q = session.query(Portrait_files).filter(Portrait_files.user_id == user_id).one_or_none()
+    if q == None:
+        t = ''
+        return t
+    else:
+        t = './portrait_storage/' + str(user_id) + '/' + q.file_name
+        return t
+
+#-------------------------------------------------------------------------------------------------------------
+class quest_info:
+
+    def __init__(self,  quest_id:int, quest_text:str, quest_option_num:int=0, quest_musicnum:int = 0 ) -> None:
+        
+        self.quest_id = quest_id
+        self.quest_text = quest_text
+        self.quest_option_num = quest_option_num
+        
+        self.quest_musicnum = quest_musicnum
+        self.option_list:List[str] = []
+        self.src_list:List[str] = []
+
+class quest_list:
+    def __init__(self, quest_num:int, quest_type:int) -> None:
+        self.quest_lists: List[quest_info] = []
+        self.quest_num = quest_num
+        self.quest_type = quest_type
+    
+    def append_quest(self, quest:quest_info) -> None:
+        self.quest_lists.append(quest)
+    
+    def get_Quest_by_questID(self, id:int) -> quest_info:
+        new_quest:quest_info = self.quest_lists[id - 1]
+        if new_quest.quest_id == id - 1:
+            return new_quest
+        else:
+            print("Not correct quest")
+            return new_quest
+    
+
+#-------------------------------------------不同类任务文件处理上传及作答上传--------------------------------------------
+
+def zipfiles(path, filename):
+    if not filename.split('.')[1] == 'zip':
+        return -4
+    zip_path = path + '/' + filename 
+    zipped = zipfile.ZipFile(zip_path)
+    save_path = path + '/'
+    print("开始解压")
+    zipped.extractall(save_path)
+    print("解压结束")
+
+    zipped.close()
+    return 0
+
+def process_select_img_file(filename, username, user_id, task_state, task_id, quest_type):
+    #将压缩包处理成quest及相关数据返回给前端，图像分类任务
+    root = get_file_root(user_id, username, task_state)
+    path = root + '/' + str(task_id)
+    if not os.path.exists(path + '/' + filename):
+        print("文件不存在")
+    k = zipfiles(path, filename)
+    if k == -4:
+        print("zip格式错误")
+    
+    if not os.path.exists(path + '/' + 'items.txt'):
+        print("txt说明文件不存在")
+    try: 
+        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+    except IOError:
+        print("读取文件失败")
+    else :
+        print("打开文件成功")
+
+    lines = f.readlines()
+    quest_num = lines[0].strip('\n')
+    que_list = quest_list(quest_num, quest_type)
+    for index in range(1, quest_num - 1):
+        info = lines[index].strip('\n')
+        infos = info.split(',')
+        quest_id = int(infos[0])
+        quest_text = infos[1]
+        option_num = int(infos[2])
+        
+        quest = quest_info(quest_id, quest_text, option_num)
+
+        for j in range(3, 3 + option_num - 1):
+            quest.option_list.append(infos[j])
+
+        pic_name = infos[3 + option_num]
+        pic_path = path + '/src/' + pic_name 
+        quest.src_list.append(pic_path)
+        que_list.append_quest(quest)
+    
+    return que_list
+
+def process_img_mark_files(filename, username, user_id, task_state, task_id, quest_type):
+    #图像标注任务
+    root = get_file_root(user_id, username, task_state)
+    path = root + '/' + str(task_id)
+    if not os.path.exists(path + '/' + filename):
+        print("文件不存在")
+    k = zipfiles(path, filename)
+    if k == -4:
+        print("zip格式错误")
+    
+    if not os.path.exists(path + '/' + 'items.txt'):
+        print("txt说明文件不存在")
+    try: 
+        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+    except IOError:
+        print("读取文件失败")
+    else :
+        print("打开文件成功")
+
+    lines = f.readlines()
+    quest_num = lines[0].strip('\n')
+    que_list = quest_list(quest_num, quest_type)
+    for index in range(1, quest_num - 1):
+        info = lines[index].strip('\n')
+        infos = info.split(',')
+        quest_id = int(infos[0])
+        quest_text = infos[1]
+        
+        
+        quest = quest_info(quest_id, quest_text)
+
+
+
+        pic_name = infos[2]
+        pic_path = path + '/src/' + pic_name 
+        quest.src_list.append(pic_path)
+        que_list.append_quest(quest)
+    
+    return que_list
+
+def process_text_select_files(filename, username, user_id, task_state, task_id, quest_type):
+    #文字选择任务
+    root = get_file_root(user_id, username, task_state)
+    path = root + '/' + str(task_id)
+    if not os.path.exists(path + '/' + filename):
+        print("文件不存在")
+    k = zipfiles(path, filename)
+    if k == -4:
+        print("zip格式错误")
+    
+    if not os.path.exists(path + '/' + 'items.txt'):
+        print("txt说明文件不存在")
+    try: 
+        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+    except IOError:
+        print("读取文件失败")
+    else :
+        print("打开文件成功")
+
+    lines = f.readlines()
+    quest_num = lines[0].strip('\n')
+    que_list = quest_list(quest_num, quest_type)
+    for index in range(1, quest_num - 1):
+        info = lines[index].strip('\n')
+        infos = info.split(',')
+        quest_id = int(infos[0])
+        quest_text = infos[1]
+        option_num = int(infos[2])
+        
+        quest = quest_info(quest_id, quest_text, option_num)
+
+        for j in range(3, 3 + option_num - 1):
+            quest.option_list.append(infos[j])
+
+
+        que_list.append_quest(quest)
+    
+    return que_list
+
+def process_select_audio_file(filename, username, user_id, task_state, task_id, quest_type):
+    #音频选择任务
+    root = get_file_root(user_id, username, task_state)
+    path = root + '/' + str(task_id)
+    if not os.path.exists(path + '/' + filename):
+        print("文件不存在")
+    k = zipfiles(path, filename)
+    if k == -4:
+        print("zip格式错误")
+    
+    if not os.path.exists(path + '/' + 'items.txt'):
+        print("txt说明文件不存在")
+    try: 
+        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+    except IOError:
+        print("读取文件失败")
+    else :
+        print("打开文件成功")
+
+    lines = f.readlines()
+    quest_num = lines[0].strip('\n')
+    que_list = quest_list(quest_num, quest_type)
+    for index in range(1, quest_num - 1):
+        info = lines[index].strip('\n')
+        infos = info.split(',')
+        quest_id = int(infos[0])
+        quest_text = infos[1]
+        music_num = infos[2]
+        option_num = int(infos[3])
+        
+        quest = quest_info(quest_id, quest_text, option_num, music_num)
+
+        for j in range(4, 4 + music_num - 1):
+            quest.src_list.append(infos[j])
+        
+        for i in range(4 + music_num, 4 + music_num + option_num - 1):
+            quest.option_list.append(infos[i])
+        
+        
+
+        que_list.append_quest(quest)
+    
+    return que_list
 
 
 
 
+def process_quest_files(filename : str, username : str, user_id : int, task_state : int, task_id : int, quest_type: int) -> quest_list:
+    
+    if quest_type == 1:
+        que_list : quest_list = process_select_img_file(filename, username, user_id, task_state, task_id, quest_type)
+    elif quest_type == 2:
+        que_list : quest_list = process_img_mark_files(filename, username, user_id, task_state, task_id, quest_type)
+    elif quest_type == 3:
+        que_list : quest_list = process_text_select_files(filename, username, user_id, task_state, task_id, quest_type)
+    elif quest_type == 4:
+        que_list : quest_list = process_select_audio_file(filename, username, user_id, task_state, task_id, quest_type)
+
+
+    return que_list
