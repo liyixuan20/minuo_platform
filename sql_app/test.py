@@ -90,4 +90,7 @@ print(f"root accepted task {task_id} finished by carol")
 
 """
 
-new_file('order.pdf','./file_storage/1_minuo/create_tasks',1, 2)
+# 测试任务文件解析
+
+if __name__ == '__main__':
+    

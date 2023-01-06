@@ -39,12 +39,12 @@ def create_profile(user_id):
     session.commit()
     return 0
 
-def create_task(owner_id, name, reward):
+def create_task(owner_id, name, reward, task_type, task_info):
     #先查询task是否已经存在
     tk = session.query(Task).filter(Task.name == name, Task.owner_id == owner_id).one_or_none()
     if tk != None:
         return -2
-    tsk = Task(owner_id=owner_id, name=name, reward=reward)
+    tsk = Task(owner_id=owner_id, name=name, reward=reward, task_type=task_type, task_info=task_info)
     session.add(tsk)
     session.commit()
     return tsk.id
