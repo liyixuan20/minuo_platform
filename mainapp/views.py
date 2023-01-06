@@ -42,15 +42,39 @@ def profilefunc(request):
     # print("tel:",user_info.tel)
     # print("points",user_info.points)
     tel=user_info.tel
+
+    #返回用户头像
+    por = query_portrait(user.id)
+    
+        
     objs = {
         "username": user_info.nickname,
         "tel":tel,
         "myTasks":user_tasks,
         "requests": request_tasks,
-        "points":user_info.points
+        "points":user_info.points,
+        "credits":user_info.credits,
+        "portrait": por
     }
 
     return render(request, 'profile.html', objs)
+
+def portrait_upload(request):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+
+    if request.method == 'POST':
+        
+        file = request.FILES.get("portraitfile")
+        filename = file.name
+        q = query_portrait(user.id)
+        if q != -1:
+            delete_portrait_file(user.id, q.file_name)
+        upload_portrait(user.id, filename, file)
+        return redirect('profile')
+    return render(request, 'upload_portrait.html')
+        
+
 
 
 def hwfunc(request):
@@ -394,3 +418,4 @@ def VerifyEmail(request):
         
         return redirect('profile')
 
+  
