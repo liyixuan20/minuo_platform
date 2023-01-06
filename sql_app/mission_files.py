@@ -9,7 +9,7 @@ import sys
 import getpass
 import shutil
 from typing import List
-from crud import *
+from .crud import *
 
 session = SessionLocal()
 #todo: 文件名是否合法
