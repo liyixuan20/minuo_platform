@@ -46,6 +46,10 @@ def profilefunc(request):
     #返回用户头像
     por = query_portrait(user.id)
     
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+    
         
     objs = {
         "username": user_info.nickname,
@@ -54,7 +58,7 @@ def profilefunc(request):
         "requests": request_tasks,
         "points":user_info.points,
         "credits":user_info.credits,
-        "portrait": por
+        "portrait": porpath
     }
 
     return render(request, 'profile.html', objs)
@@ -68,8 +72,8 @@ def portrait_upload(request):
         file = request.FILES.get("portraitfile")
         filename = file.name
         q = query_portrait(user.id)
-        if q != -1:
-            delete_portrait_file(user.id, q.file_name)
+        if q != '':
+            delete_portrait_file(user.id, q)
         upload_portrait(user.id, filename, file)
         return redirect('profile')
     return render(request, 'upload_portrait.html')
