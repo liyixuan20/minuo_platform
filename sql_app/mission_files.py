@@ -5,7 +5,11 @@ import re
 import os
 import base64
 import zipfile
+import sys
+import getpass
+import shutil
 from typing import List
+from crud import *
 
 session = SessionLocal()
 #todo: 文件名是否合法
@@ -219,8 +223,8 @@ def query_portrait(user_id : int) -> str:
         t = ''
         return t
     else:
-        t = './portrait_storage/' + str(user_id) + '/' + q.file_name
-        return t
+        
+        return q.file_name
 
 #-------------------------------------------------------------------------------------------------------------
 class quest_info:
@@ -234,12 +238,15 @@ class quest_info:
         self.quest_musicnum = quest_musicnum
         self.option_list:List[str] = []
         self.src_list:List[str] = []
+        self.copy_path:List[str] = []
 
 class quest_list:
-    def __init__(self, quest_num:int, quest_type:int) -> None:
+    def __init__(self, quest_num:int, quest_type:int, task_id:int = 0) -> None:
         self.quest_lists: List[quest_info] = []
         self.quest_num = quest_num
         self.quest_type = quest_type
+        self.task_id = task_id
+        self.task_info = ''
     
     def append_quest(self, quest:quest_info) -> None:
         self.quest_lists.append(quest)
@@ -421,7 +428,8 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
         quest = quest_info(quest_id, quest_text, option_num, music_num)
 
         for j in range(4, 4 + music_num - 1):
-            quest.src_list.append(infos[j])
+            audio_path = path + '/src/' + infos[j]
+            quest.src_list.append(audio_path)
         
         for i in range(4 + music_num, 4 + music_num + option_num - 1):
             quest.option_list.append(infos[i])
@@ -432,10 +440,39 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
     
     return que_list
 
+def copy_quest_files(que_list: quest_list) -> None:
+    #copy src文件到media 下
+    quest_num:int = quest_list.quest_num
+    media_path = './media/'
+    for i in range(1, quest_num):
+        quest:quest_info = que_list.get_Quest_by_questID(i)
+        for path in quest.src_list:
+            filename = path.split('/')[-1]
+            if os.path.exists(media_path + filename):
+                continue
+            tar = media_path + filename
+            quest.copy_path.append(tar)
+            shutil.copyfile(path, tar)
+            
+    print("拷贝文件结束")
 
+    return
 
+def delete_copy_files_by_task_id(que_list:quest_list) -> None:
+    #删除之前复制过来的文件
+    quest_num:int = quest_list.quest_num
+    for i in range(1, quest_num):
+        quest:quest_info = que_list.get_Quest_by_questID(i)
+        for path in quest.copy_path:
+            os.remove(path)
+    print("成功删除完毕")
+    return
 
-def process_quest_files(filename : str, username : str, user_id : int, task_state : int, task_id : int, quest_type: int) -> quest_list:
+def process_quest_files(username : str, user_id : int, task_id : int) -> quest_list:
+    tsk = get_task_by_task_id(task_id)
+    quest_type = tsk.task_type
+    task_state = 0
+    filename = get_task_filename(user_id, task_id, 0)
     
     if quest_type == 1:
         que_list : quest_list = process_select_img_file(filename, username, user_id, task_state, task_id, quest_type)
@@ -446,5 +483,7 @@ def process_quest_files(filename : str, username : str, user_id : int, task_stat
     elif quest_type == 4:
         que_list : quest_list = process_select_audio_file(filename, username, user_id, task_state, task_id, quest_type)
 
-
+    que_list.task_id = task_id
+    que_list.task_info = tsk.task_info
     return que_list
+
