@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse,Http404, FileResponse
 import re
-import base64
+import json
 
 
 def listfunc(request):
@@ -25,6 +25,11 @@ def listfunc(request):
     }
     return render(request, 'list.html', objs)
 
+def list_ajax(request):
+    a={
+        "test":555
+    }
+    return HttpResponse(json.dumps(a), content_type='application/json')
 
 def profilefunc(request):
     # TODO: 用户详细信息，有修改头像、密码的入口
@@ -222,6 +227,89 @@ def front_task_upload(request,req_id):
         return redirect('profile')
     return render(request, 'task_upload.html', obj)
 
+def getQusetByQuestID(questid):
+    # 前端模拟后端，用于调试
+    quests_database = [{"quest_type":1,"quest_id":1,
+"quest_text":"题目一描述",
+"quest_option_num":4,
+"quest_musicnum":0,
+"quest_options_list":["选项1","选项2","选项3","选项4"],
+"quest_musics_list":[],
+"quest_pics_path_list":["path1"]
+},{"quest_type":1,"quest_id":2,
+"quest_text":"题目二描述",
+"quest_option_num":4,
+"quest_musicnum":0,
+"quest_options_list":["选项1","选项2","选项3","选项4"],
+"quest_musics_list":[],
+"quest_pics_path_list":["path2"]
+},{"quest_type":1,"quest_id":3,
+"quest_text":"题目三描述",
+"quest_option_num":4,
+"quest_musicnum":0,
+"quest_options_list":["选项1","选项2","选项3","选项4"],
+"quest_musics_list":[],
+"quest_pics_path_list":["path3"]
+},{"quest_type":1,"quest_id":4,
+"quest_text":"题目四描述",
+"quest_option_num":4,
+"quest_musicnum":0,
+"quest_options_list":["选项1","选项2","选项3","选项4"],
+"quest_musics_list":[],
+"quest_pics_path_list":["path4"]
+},{"quest_type":1,"quest_id":5,
+"quest_text":"题目五描述",
+"quest_option_num":4,
+"quest_musicnum":0,
+"quest_options_list":["选项1","选项2","选项3","选项4"],
+"quest_musics_list":[],
+"quest_pics_path_list":["path4"]
+}]
+    for quest in quests_database:
+        # print(quest["quest_id"])
+        # print(questid)
+        if quest["quest_id"] == questid:
+            
+            return quest
+        else:
+            moren_quest = {"quest_type":1,"quest_id":0,
+"quest_text":"默认描述",
+"quest_option_num":4,
+"quest_musicnum":0,
+"quest_options_list":["选项","选项","选项","选项"],
+"quest_musics_list":[],
+"quest_pics_path_list":["picpath"]
+}
+    return moren_quest 
+
+def front_task_operate(request,req_id):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    task = get_task_by_task_id(req_id)
+    task_description = "这是任务的描述"
+    task_item_num = 5
+    task_item_range = []
+    quests = []
+    for i in range(task_item_num):
+        task_item_range.append(i+1)
+        quests.append(getQusetByQuestID(i+1))
+    # print(quests)
+    for quest in quests:
+        for i in range(quest["quest_option_num"]):
+            if i == 0:
+                quest["quest_option_nums"] = [0]
+            else:
+                quest["quest_option_nums"].append(i)
+    obj={
+        "taskname":task.name,
+        "task_description":task_description,
+        "task_item_num":task_item_num,
+        "task_item_range":task_item_range,
+        "quests":quests,
+    }
+    return render(request, 'task_operate.html', obj)
+
+
 def front_task_upload_finish(request,req_id):
     finish_task(req_id)
     return redirect('profile')
@@ -240,6 +328,7 @@ def front_upload_file(request):
     # user_info= get_profile_by_user_id(user.id)
     step = 1
     global  taskname
+    global  points
     # print(user.id)
     if request.POST and 'taskname' in request.POST:
         taskname = request.POST['taskname']
@@ -247,12 +336,12 @@ def front_upload_file(request):
         # print(taskname)
         points = request.POST['points']
         # print(points)
-        create_task(user.id,taskname,points)
         step=2
         # print(points)
     elif request.POST:
         file = request.FILES.get("taskfile")
         file_name = file.name
+        create_task(user.id,taskname,points)
         # print(file_name)
         # file_data = base64.b64encode(file.read())
         # print(file_data)
