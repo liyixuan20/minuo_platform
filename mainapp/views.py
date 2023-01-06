@@ -359,19 +359,23 @@ def front_upload_file(request):
     step = 1
     global  taskname
     global  points
+    global  taskinfo
+    global  tasktype
     # print(user.id)
     if request.POST and 'taskname' in request.POST:
         taskname = request.POST['taskname']
         # points = request.POST['points']
         # print(taskname)
         points = request.POST['points']
+        taskinfo = request.POST['description']
+        tasktype = request.POST['type']
         # print(points)
         step=2
         # print(points)
     elif request.POST:
         file = request.FILES.get("taskfile")
         file_name = file.name
-        create_task(user.id,taskname,points)
+        create_task(user.id,taskname,points,tasktype,taskinfo)
         # print(file_name)
         # file_data = base64.b64encode(file.read())
         # print(file_data)

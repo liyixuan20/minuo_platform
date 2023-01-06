@@ -65,10 +65,10 @@
             <div class="form-group">
                 <label for="exampleFormControlInput1">任务类型</label>
                 <select class="form-control" name = "type">
-                    <option>垃圾邮箱识别</option>
-                    <option>图片框选</option>
-                    <option>图片识别</option>
-                    <option>音频识别</option>
+                    <option name="email-task" value = 3>垃圾邮箱识别</option>
+                    <option name="picture-select" value = 2>图片框选</option>
+                    <option name="picture-recognize" value = 1>图片识别</option>
+                    <option name="audio-recognize" value = 4>音频识别</option>
                 </select>
             </div>
             <div class="form-group">
@@ -76,7 +76,7 @@
                 <input type="text" class="form-control" id="points" name="points">
             </div>
             <div class="form-group">
-                <label for="exampleFormControlInput1">任务描述</label>
+                <label for="exampleFormControlInput1" name="description">任务描述</label>
                 <input type="textarea" class="form-control" id="points" name="description">
             </div>
             <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
