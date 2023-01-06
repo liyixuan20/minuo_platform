@@ -29,6 +29,7 @@ docker部署：`from .models import *, from .database import Base, SessionLocal`
 | -1     | 传入参数为空 |
 | -2      | 重复的创建   |
 | -3 | 文件上传/下载失败 |
+| -4 | 错误的参数 |
 
 
 

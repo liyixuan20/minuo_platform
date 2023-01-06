@@ -1,3 +1,5 @@
 **/__pycache__
 **/migrations
 .venv/
+/file_storage
+/portrait_storage
