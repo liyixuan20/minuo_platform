@@ -50,6 +50,7 @@ def profilefunc(request):
 
     #返回用户头像
     por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'

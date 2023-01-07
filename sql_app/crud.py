@@ -101,6 +101,7 @@ def accept_task(task_id):
 
     receiver = session.query(Profile).filter(Profile.user_id==receiver_id)
     receiver.update({Profile.points: Profile.points + reward})
+    receiver.update({Profile.credits: Profile.credits + 10})
     session.commit()
 
 def reject_task(task_id):
@@ -160,9 +161,11 @@ def delete_request(task_id, user_id):
     q = session.query(Request).filter(Request.task_id == task_id).all()
     if q == []:
         # tk = session.query(Task).filter(Task.id == task_id).one()
-        tsk = session.query(Task).filter(Task.id == task_id)
+        tsk = session.query(Task).filter(Task.id == task_id).one_or_none()
         # if tk.statue == 1:
-        tsk.update({Task.status: 0})
+        if tsk.status == 1:
+            tsk.status = 0
+
     session.commit()
 
 def delete_task_by_id(task_id):

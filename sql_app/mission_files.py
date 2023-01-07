@@ -288,7 +288,7 @@ class quest_list:
     
     def get_Quest_by_questID(self, id:int) -> quest_info:
         new_quest:quest_info = self.quest_lists[id - 1]
-        if new_quest.quest_id == id - 1:
+        if new_quest.quest_id == id:
             return new_quest
         else:
             print("Not correct quest")
@@ -536,13 +536,13 @@ def process_quest_files(username : str, user_id : int, task_id : int) -> quest_l
 
 #---------------------------------------------提交用户作答-----------------------------------------------------------
 
-def process_select_answer(answer:Dict[str, int], username, user_id, task_id) -> None:
+def process_select_answer(answer:List[str], username, user_id, task_id) -> None:
 
     answer_list:List[str] = []
     ans_num = len(answer)
-    for index in range(1, ans_num + 1):
-        order = str(index)
-        line = order + ':' + answer[order] + '\n'
+    for index in range(0, ans_num):
+        order = str(index + 1)
+        line = order + ':' + answer[index] + '\n'
         answer_list.append(line)
     root = get_file_root(user_id, username, 1)
     filename = 'answer_for_%s.txt' % str(task_id)
