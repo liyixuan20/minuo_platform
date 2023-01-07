@@ -323,12 +323,12 @@ def front_task_operate(request,req_id):
     task_item_num = task.quest_num
     task_item_range = []
     quests = []
-    # print(task.quest_type)
+    print(task.quest_type)
     # print(task.quest_lists)
     for i in range(task_item_num):
         task_item_range.append(i+1)
         quests.append(task.get_Quest_by_questID(i+1))
-    print(quests[0].copy_path)
+    # print(quests[0].copy_path)
     # print(quests)
     # for quest in quests:
     #     for i in range(quest.quest_option_num):
