@@ -5,9 +5,21 @@
     <script type="text/javascript" src="/static/jquery-3.6.3.js"></script>
 </head>
 <script>
+    var js_task_id = 0 ;
+    var js_task_items_num = 0;
+    var js_items_answer = new Array();
+    var js_items_answer_x1 = new Array();
+    var js_items_answer_y1 = new Array();
+    var js_items_answer_x2 = new Array();
+    var js_items_answer_y2 = new Array();
+    var js_task_type = 0;
     $().ready(function(){
         $(".task-quest").hide();
+        $(".hidden").hide()
         $(".task-quest#1").show();
+        js_task_id = $("#js-task-id").text;
+        js_task_items_num = $("#js-task-item-num").text;
+        js_task_type = $("js-task-type").text;
         $(".page-item .page-link").click(function(){
             console.log(this.text)
             var id_num = this.text;
@@ -62,6 +74,9 @@
     </div>
 </nav>
 <div>
+    <a class="hidden" id="js-task-id">{{task_id}}</a>
+    <a class="hidden" id="js-task-item-num">{{task_item_num}}</a>
+    <a class="hidden" id="js-task-type">{{task_type}}</a>
     <h1>{{taskname}}</h1>
     <p>{{task_description}}</p>
     <nav aria-label="Page navigation example">
@@ -88,13 +103,16 @@
     <div class="task-quest" id="{{quest.quest_id}}">
         <div class="task-quest-NO">{{quest.quest_id}}</div>
         <p class = "task-quest-description">{{quest.quest_text}}</p>
-        <img class="task-source" src="{{quest.copy_path.0}}" class=" d-block w-100">
+        <img class="img-fluid" src="{{quest.copy_path.0}}" style="width: 120px; height:auto;">
         <!-- <div class="task-source">{{quest.quest_pics_path_list.0}}</div> -->
-        <td>
         {% for quest_option in quest.option_list %}
-        <input type="radio" class="task-item" id="0" name = "quest_option" value = "{{quest_option}}">{{quest_option}}</input>
+        <div class="custom-control custom-radio">
+            <input type="radio" id="{{quest.quest_id}}+{{quest_option}}" name="{{quest.quest_id}}" class="custom-control-input" value="{{quest.quest_id}},{{quest_option}}">
+            <label class="custom-control-label" for="{{quest.quest_id}}+{{quest_option}}">{{quest_option}}</label>
+        </div>
+        <!-- <div><input type="radio" class="task-item" id="0" name = "quest_option" value = "{{quest_option}}">{{quest_option}}</input></div> -->
         {% endfor %}
-        </td>
+        
     </div>
     {% endfor %}
     <form class="form-horizontal" method="POST" enctype="multipart/form-data" style = "padding-top:20px;margin-left:39px;">

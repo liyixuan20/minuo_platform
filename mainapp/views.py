@@ -328,6 +328,7 @@ def front_task_operate(request,req_id):
     for i in range(task_item_num):
         task_item_range.append(i+1)
         quests.append(task.get_Quest_by_questID(i+1))
+    print(quests[0].copy_path)
     # print(quests)
     # for quest in quests:
     #     for i in range(quest.quest_option_num):
@@ -336,7 +337,9 @@ def front_task_operate(request,req_id):
     #         else:
     #             quest.quest_option_nums.append(i)
     obj={
+        "task_id":req_id,
         "taskname":taskname,
+        "task_type":task.quest_type,
         "task_description":task_description,
         "task_item_num":task_item_num,
         "task_item_range":task_item_range,

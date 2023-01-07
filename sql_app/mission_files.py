@@ -166,11 +166,12 @@ def create_user_portrait_file(user_id):
     return 
  
 def new_protrait_file(path, user_id, filename):
-    #允许多次上传文件（允许同名）
+    #允许多次上传文件
     if not os.path.exists(path):
         os.makedirs(path)
 
-
+    if os.path.exists(path + '/' + filename):
+        return -1
     try:
         f = open(path + '/' + filename, 'w')
         f.close()
@@ -180,13 +181,16 @@ def new_protrait_file(path, user_id, filename):
     por = Portrait_files(user_id = user_id, file_name = filename)
     session.add(por)
     session.commit()
-    return
+    return 0
 
 
 def upload_portrait(user_id, filename, file):
     create_user_portrait_file(user_id)
     root = './portrait_storage/' + str(user_id)
-    new_protrait_file(root, user_id, filename)
+    signal = new_protrait_file(root, user_id, filename)
+    if signal == -1:
+        delete_portrait_file(user_id, filename)
+        new_protrait_file(root, user_id, filename)
     file_content = ''
     # file_content = file.read()
     # try:
@@ -205,6 +209,7 @@ def upload_portrait(user_id, filename, file):
         #     f.write(i)
     print("f write success")
     f.close()
+    copy_portrait_files(user_id, filename)
     return
 
 def delete_portrait_file(user_id, filename):
@@ -226,6 +231,33 @@ def query_portrait(user_id : int) -> str:
         
         return q.file_name
 
+def copy_portrait_files(user_id, filename):
+    src_path = './portrait_storage/' + str(user_id) + '/' +filename
+    tar_path = './media/' + filename
+    if os.path.exists(tar_path):
+        return
+    shutil.copyfile(src_path, tar_path)
+    print("拷贝文件结束")
+    copy_path = '/media_url/' + filename
+    return 
+
+def remove_other_portrait(user_id):
+    q = session.query(Portrait_files).filter(Portrait_files.user_id == user_id).one_or_none()
+    filename = q.file_name
+    names = os.listdir('./media/')
+    for name in names:
+        if name != filename and name != 'necoru.jpg':
+            os.remove('./media/' + name)
+    return
+
+def update_portrait_files(user_id, filename):
+    remove_other_portrait(user_id)
+    q = query_portrait(user_id)
+    if  (not os.path.exists( './media/' + filename)) and (q != ''):
+        copy_portrait_files(user_id, filename)
+    
+    return
+
 #-------------------------------------------------------------------------------------------------------------
 class quest_info:
 
@@ -242,7 +274,7 @@ class quest_info:
 
 class quest_list:
     def __init__(self, quest_num:int, quest_type:int, task_id:int = 0) -> None:
-        self.quest_lists:List[quest_info] = []
+        self.quest_lists: List[quest_info] = []
         self.quest_num = quest_num
         self.quest_type = quest_type
         self.task_id = task_id
@@ -255,7 +287,7 @@ class quest_list:
     
     def get_Quest_by_questID(self, id:int) -> quest_info:
         new_quest:quest_info = self.quest_lists[id - 1]
-        if new_quest.quest_id == id:
+        if new_quest.quest_id == id - 1:
             return new_quest
         else:
             print("Not correct quest")
@@ -447,27 +479,6 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
     
     return que_list
 
-# def copy_quest_files(que_list: quest_list) -> None:
-#     #copy src文件到media 下
-#     quest_num:int = que_list.quest_num
-#     media_path = './media/'
-#     for i in range(1, quest_num + 1):
-#         quest:quest_info = que_list.get_Quest_by_questID(i)
-#         for path in quest.src_list:
-#             filename = path.split('/')[-1]
-#             if os.path.exists(media_path + filename):
-#                 continue
-#             tar = media_path + filename
-            
-#             quest.copy_path.append(tar)
-#             # tar = tar[1:]
-#             print("path = ",path)
-#             print("tar = ",tar)
-#             shutil.copyfile(path, tar)
-            
-#     print("拷贝文件结束")
-
-#     return
 def copy_quest_files(que_list: quest_list) -> None:
     #copy src文件到media 下
     quest_num:int = que_list.quest_num
@@ -476,21 +487,22 @@ def copy_quest_files(que_list: quest_list) -> None:
         quest:quest_info = que_list.get_Quest_by_questID(i)
         for path in quest.src_list:
             filename = path.split('/')[-1]
-            if os.path.exists(media_path + filename):
-                continue
+
             tar = media_path + filename
             copypath = '/media_url/' + filename
             quest.copy_path.append(copypath)
+            if os.path.exists(media_path + filename):
+                continue
             shutil.copyfile(path, tar)
-
+            
     print("拷贝文件结束")
 
     return
 
 def delete_copy_files_by_task_id(que_list:quest_list) -> None:
     #删除之前复制过来的文件
-    quest_num:int = quest_list.quest_num
-    for i in range(1, quest_num):
+    quest_num:int = que_list.quest_num
+    for i in range(1, quest_num + 1):
         quest:quest_info = que_list.get_Quest_by_questID(i)
         for path in quest.copy_path:
             os.remove(path)

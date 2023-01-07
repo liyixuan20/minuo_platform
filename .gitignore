@@ -2,4 +2,5 @@
 **/migrations
 .venv/
 /file_storage
+/media
 /portrait_storage
