@@ -242,18 +242,20 @@ class quest_info:
 
 class quest_list:
     def __init__(self, quest_num:int, quest_type:int, task_id:int = 0) -> None:
-        self.quest_lists: List[quest_info] = []
+        self.quest_lists:List[quest_info] = []
         self.quest_num = quest_num
         self.quest_type = quest_type
         self.task_id = task_id
         self.task_info = ''
+        self.task_name = ''
+        self.reward = 0
     
     def append_quest(self, quest:quest_info) -> None:
         self.quest_lists.append(quest)
     
     def get_Quest_by_questID(self, id:int) -> quest_info:
         new_quest:quest_info = self.quest_lists[id - 1]
-        if new_quest.quest_id == id - 1:
+        if new_quest.quest_id == id:
             return new_quest
         else:
             print("Not correct quest")
@@ -263,6 +265,8 @@ class quest_list:
 #-------------------------------------------不同类任务文件处理上传及作答上传--------------------------------------------
 
 def zipfiles(path, filename):
+    if not os.path.exists(path +'/' + filename):
+        return -1
     if not filename.split('.')[1] == 'zip':
         return -4
     zip_path = path + '/' + filename 
@@ -284,20 +288,22 @@ def process_select_img_file(filename, username, user_id, task_state, task_id, qu
     k = zipfiles(path, filename)
     if k == -4:
         print("zip格式错误")
+    elif k == -1:
+        print("上传的文件不存在")
     
     if not os.path.exists(path + '/' + 'items.txt'):
         print("txt说明文件不存在")
     try: 
-        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+        f = open(path + '/' + 'items.txt', encoding = 'utf-8')
     except IOError:
         print("读取文件失败")
     else :
         print("打开文件成功")
 
     lines = f.readlines()
-    quest_num = lines[0].strip('\n')
+    quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
-    for index in range(1, quest_num - 1):
+    for index in range(1, quest_num + 1):
         info = lines[index].strip('\n')
         infos = info.split(',')
         quest_id = int(infos[0])
@@ -306,11 +312,12 @@ def process_select_img_file(filename, username, user_id, task_state, task_id, qu
         
         quest = quest_info(quest_id, quest_text, option_num)
 
-        for j in range(3, 3 + option_num - 1):
+        for j in range(3, 3 + option_num ):
             quest.option_list.append(infos[j])
 
         pic_name = infos[3 + option_num]
         pic_path = path + '/src/' + pic_name 
+        print("pic_path", pic_path)
         quest.src_list.append(pic_path)
         que_list.append_quest(quest)
     
@@ -329,16 +336,16 @@ def process_img_mark_files(filename, username, user_id, task_state, task_id, que
     if not os.path.exists(path + '/' + 'items.txt'):
         print("txt说明文件不存在")
     try: 
-        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+        f = open(path + '/' + 'items.txt', encoding = 'utf-8')
     except IOError:
         print("读取文件失败")
     else :
         print("打开文件成功")
 
     lines = f.readlines()
-    quest_num = lines[0].strip('\n')
+    quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
-    for index in range(1, quest_num - 1):
+    for index in range(1, quest_num + 1):
         info = lines[index].strip('\n')
         infos = info.split(',')
         quest_id = int(infos[0])
@@ -369,14 +376,14 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
     if not os.path.exists(path + '/' + 'items.txt'):
         print("txt说明文件不存在")
     try: 
-        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+        f = open(path + '/' + 'items.txt', encoding = 'utf-8')
     except IOError:
         print("读取文件失败")
     else :
         print("打开文件成功")
 
     lines = f.readlines()
-    quest_num = lines[0].strip('\n')
+    quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
     for index in range(1, quest_num - 1):
         info = lines[index].strip('\n')
@@ -387,7 +394,7 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
         
         quest = quest_info(quest_id, quest_text, option_num)
 
-        for j in range(3, 3 + option_num - 1):
+        for j in range(3, 3 + option_num):
             quest.option_list.append(infos[j])
 
 
@@ -408,7 +415,7 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
     if not os.path.exists(path + '/' + 'items.txt'):
         print("txt说明文件不存在")
     try: 
-        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+        f = open(path + '/' + 'items.txt', encoding = 'utf-8')
     except IOError:
         print("读取文件失败")
     else :
@@ -427,11 +434,11 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
         
         quest = quest_info(quest_id, quest_text, option_num, music_num)
 
-        for j in range(4, 4 + music_num - 1):
+        for j in range(4, 4 + music_num ):
             audio_path = path + '/src/' + infos[j]
             quest.src_list.append(audio_path)
         
-        for i in range(4 + music_num, 4 + music_num + option_num - 1):
+        for i in range(4 + music_num, 4 + music_num + option_num ):
             quest.option_list.append(infos[i])
         
         
@@ -440,20 +447,42 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
     
     return que_list
 
+# def copy_quest_files(que_list: quest_list) -> None:
+#     #copy src文件到media 下
+#     quest_num:int = que_list.quest_num
+#     media_path = './media/'
+#     for i in range(1, quest_num + 1):
+#         quest:quest_info = que_list.get_Quest_by_questID(i)
+#         for path in quest.src_list:
+#             filename = path.split('/')[-1]
+#             if os.path.exists(media_path + filename):
+#                 continue
+#             tar = media_path + filename
+            
+#             quest.copy_path.append(tar)
+#             # tar = tar[1:]
+#             print("path = ",path)
+#             print("tar = ",tar)
+#             shutil.copyfile(path, tar)
+            
+#     print("拷贝文件结束")
+
+#     return
 def copy_quest_files(que_list: quest_list) -> None:
     #copy src文件到media 下
-    quest_num:int = quest_list.quest_num
+    quest_num:int = que_list.quest_num
     media_path = './media/'
-    for i in range(1, quest_num):
+    for i in range(1, quest_num + 1):
         quest:quest_info = que_list.get_Quest_by_questID(i)
         for path in quest.src_list:
             filename = path.split('/')[-1]
             if os.path.exists(media_path + filename):
                 continue
             tar = media_path + filename
-            quest.copy_path.append(tar)
+            copypath = '/media_url/' + filename
+            quest.copy_path.append(copypath)
             shutil.copyfile(path, tar)
-            
+
     print("拷贝文件结束")
 
     return
@@ -485,5 +514,9 @@ def process_quest_files(username : str, user_id : int, task_id : int) -> quest_l
 
     que_list.task_id = task_id
     que_list.task_info = tsk.task_info
+    que_list.task_name = tsk.name
+    que_list.reward = tsk.reward
+    copy_quest_files(que_list)
+    
     return que_list
 

@@ -248,7 +248,7 @@ def front_task_upload(request,req_id):
         # file_url =  file_data.split(',')[1]
         create_new_user_filefolder(user.id,user.username)
         #filename, username, user_id, task_state, task_id, file_base64s
-        upload_file(file_name,user.username,user.id,0,req_id,file)
+        upload_file(file_name,user.username,user.id,1,req_id,file)
         # with open(file.name, 'wb') as f:
         #     for i in file:
         #         f.write(i)
@@ -313,25 +313,30 @@ def getQusetByQuestID(questid):
 def front_task_operate(request,req_id):
     user_name = request.user
     user = User.objects.get(username = user_name)
+    user_id = user.id
+    username = user.username
     # (username : str, user_id : int, task_id : int) -> quest_list:
-    task = process_quest_files(user.username,user.id,req_id)
+    task = process_quest_files(username,user_id,req_id)
+    taskname = get_task_by_task_id(req_id).name
     # task = get_task_by_task_id(req_id)
     task_description = task.task_info
     task_item_num = task.quest_num
     task_item_range = []
     quests = []
+    # print(task.quest_type)
+    # print(task.quest_lists)
     for i in range(task_item_num):
         task_item_range.append(i+1)
         quests.append(task.get_Quest_by_questID(i+1))
     # print(quests)
-    for quest in quests:
-        for i in range(quest["quest_option_num"]):
-            if i == 0:
-                quest["quest_option_nums"] = [0]
-            else:
-                quest["quest_option_nums"].append(i)
+    # for quest in quests:
+    #     for i in range(quest.quest_option_num):
+    #         if i == 0:
+    #             quest.quest_option_nums = [0]
+    #         else:
+    #             quest.quest_option_nums.append(i)
     obj={
-        "taskname":task.name,
+        "taskname":taskname,
         "task_description":task_description,
         "task_item_num":task_item_num,
         "task_item_range":task_item_range,
@@ -369,12 +374,24 @@ def front_upload_file(request):
         points = request.POST['points']
         taskinfo = request.POST['description']
         tasktype = request.POST['type']
+        if tasktype == '图片识别':
+            print(tasktype)
+            tasktype = 1
+        elif tasktype == '图片框选':
+            tasktype = 2
+        elif tasktype == '垃圾邮箱识别':
+            tasktype = 3
+        elif tasktype == '音频识别':
+            tasktype = 4
+        else:
+            print(tasktype)
         # print(points)
         step=2
         # print(points)
     elif request.POST:
         file = request.FILES.get("taskfile")
         file_name = file.name
+        tasktype = int(tasktype)
         create_task(user.id,taskname,points,tasktype,taskinfo)
         # print(file_name)
         # file_data = base64.b64encode(file.read())
@@ -385,7 +402,7 @@ def front_upload_file(request):
         task_id = get_taskid_by_name(user.id,taskname)
         create_new_user_filefolder(user.id,user.username)
         #filename, username, user_id, task_state, task_id, file_base64
-        upload_file(file_name,user.username,user.id,1,task_id,file)
+        upload_file(file_name,user.username,user.id,0,task_id,file)
         # with open(file.name, 'wb') as f:
         #     for i in file:
         #         f.write(i)

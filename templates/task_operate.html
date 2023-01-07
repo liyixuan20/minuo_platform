@@ -88,11 +88,13 @@
     <div class="task-quest" id="{{quest.quest_id}}">
         <div class="task-quest-NO">{{quest.quest_id}}</div>
         <p class = "task-quest-description">{{quest.quest_text}}</p>
-        <img class="task-source" src="{{quest.quest_pics_path_list.0}}" class=" d-block w-100">
+        <img class="task-source" src="{{quest.copy_path.0}}" class=" d-block w-100">
         <!-- <div class="task-source">{{quest.quest_pics_path_list.0}}</div> -->
-        {% for quest_option in quest.quest_options_list %}
-        <div class="task-item" id="0">{{quest_option}}</div>
+        <td>
+        {% for quest_option in quest.option_list %}
+        <input type="radio" class="task-item" id="0" name = "quest_option" value = "{{quest_option}}">{{quest_option}}</input>
         {% endfor %}
+        </td>
     </div>
     {% endfor %}
     <form class="form-horizontal" method="POST" enctype="multipart/form-data" style = "padding-top:20px;margin-left:39px;">
@@ -102,7 +104,7 @@
             <input type="file" class="form-control" id="taskfile" name="taskfile">
         </div>
         <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
-            <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">创建任务</button>
+            <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">提交任务</button>
         </div>
     </form>
     <a href="../../task_upload_finish/{{req_id}}/"><button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">结束任务</button></a>
