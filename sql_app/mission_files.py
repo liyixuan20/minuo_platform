@@ -580,6 +580,16 @@ def process_answer(answer, username, user_id, task_id):
         process_select_answer(answer, username, user_id, task_id)
     elif task_type == 2:
         process_mark_answer()
+
+
+
+#显示用户作答情况
+def display_user_answer(user_id, task_id):
+
+
+
+
+    return
     
 #—-------------------------------------------后台播放音频-------------------------------------
 
