@@ -312,9 +312,16 @@ def getQusetByQuestID(questid):
     return moren_quest 
 
 def task_operate_complete(request):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    user_id = user.id
+    username = user.username
     if request.method == "PUT":
         data = json.loads(request.body)
         print(data)
+        items_answer = data["items_answer"]
+        task_id = int(data["task_id"])
+        process_answer(items_answer, username, user_id, task_id)
         return JsonResponse({'res':'ok'})
 
 def front_task_operate(request,req_id):
