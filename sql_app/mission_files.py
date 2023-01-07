@@ -8,7 +8,8 @@ import zipfile
 import sys
 import getpass
 import shutil
-from typing import List
+import pygame
+from typing import List, Dict
 from .crud import *
 
 session = SessionLocal()
@@ -532,3 +533,58 @@ def process_quest_files(username : str, user_id : int, task_id : int) -> quest_l
     
     return que_list
 
+
+#---------------------------------------------提交用户作答-----------------------------------------------------------
+
+def process_select_answer(answer:Dict[str, int], username, user_id, task_id) -> None:
+
+    answer_list:List[str] = []
+    ans_num = len(answer)
+    for index in range(1, ans_num + 1):
+        order = str(index)
+        line = order + ':' + answer[order] + '\n'
+        answer_list.append(line)
+    root = get_file_root(user_id, username, 1)
+    filename = 'answer_for_%s.txt' % str(task_id)
+    task_state = 1
+    if os.path.exists(root + '/' + str(task_id) + '/' + filename):
+        print("file already exists")
+        return
+    else:
+        new_file(filename, root, user_id, task_id, task_state)
+    
+    print("创建任务文件成功")
+
+    f = open(root + '/' + str(task_id) + '/' + filename, 'wb')
+    print("file open success")
+    f.writelines(answer_list)
+    f.close()
+    print("写入完毕")
+    
+    finish_task(task_id)
+    return
+
+def process_mark_answer() -> None:
+    pass
+
+
+
+def process_answer(answer, username, user_id, task_id):
+    tsk = get_task_by_task_id(task_id)
+    task_type = tsk.task_type
+
+    if task_type == 1 and task_type == 3 and task_type == 4:
+        process_select_answer(answer, username, user_id, task_id)
+    elif task_type == 2:
+        process_mark_answer()
+    
+#—-------------------------------------------后台播放音频-------------------------------------
+
+def audio_play(path:str, volume=0.5):
+    src_path = './media/' + path.split('/')[-1]
+    pygame.mixer.init()
+    pygame.mixer.music.load(src_path)
+    pygame.mixer.music.set_volume(volume)
+    pygame.mixer.music.play()
+    print("playing audio")
+    return
