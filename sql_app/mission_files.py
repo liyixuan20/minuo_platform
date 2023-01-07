@@ -288,7 +288,7 @@ class quest_list:
     
     def get_Quest_by_questID(self, id:int) -> quest_info:
         new_quest:quest_info = self.quest_lists[id - 1]
-        if new_quest.quest_id == id - 1:
+        if new_quest.quest_id == id:
             return new_quest
         else:
             print("Not correct quest")

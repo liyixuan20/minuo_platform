@@ -59,7 +59,21 @@
             console.log("js_task_items_num = ",js_task_items_num)
             console.log("js_items_answer = ",js_items_answer)
             console.log("js_task_type = ",js_task_type)
-            console.log("=======================\nTask submit!")
+            $.ajax({
+                url:'../../task_operate_complete/',
+                type:'PUT',
+                dataType:'json',
+                data:JSON.stringify({
+                    "task_id":js_task_id,
+                    "task_items_num":js_task_items_num,
+                    "items_answer":js_items_answer,
+                    "task_type":js_task_type,
+                }),
+                headers:{'X-CSRFToken':"{{csrf_token}}"},
+                success:function(data){
+                    console.log("=======================\nTask submit!")
+                }
+            })
         })
     })
 </script>
