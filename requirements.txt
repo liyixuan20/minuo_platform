@@ -4,3 +4,4 @@ pymysql
 mysqlclient
 cryptography
 sqlalchemy
+pygame
