@@ -13,22 +13,67 @@
     var js_items_answer_x2 = new Array();
     var js_items_answer_y2 = new Array();
     var js_task_type = 0;
+    var last_item = 1;
     $().ready(function(){
         $(".task-quest").hide();
         $(".hidden").hide()
         $(".task-quest#1").show();
-        js_task_id = $("#js-task-id").text;
-        js_task_items_num = $("#js-task-item-num").text;
-        js_task_type = $("js-task-type").text;
+        $(".page-item#test1").attr({
+            "class":"page-item active"
+        });
+
+        js_task_id = $("#js-task-id").text();
+        js_task_items_num = $("#js-task-item-num").text();
+        js_task_type = $("#js-task-type").text();
+        console.log("js_task_type = ",js_task_type)
         $(".page-item .page-link").click(function(){
+            $(".page-item").attr({
+                "class":"page-item"
+            });
+            $(this).parent().attr({
+                "class":"page-item active"
+            });
             console.log(this.text)
             var id_num = this.text;
             $(".task-quest").hide();
             var str = ".task-quest#"+String(id_num);
             var task_quest = $(str);
-            // console.log(task_quest["id"])
+            // jq_radios_checked = $(":radio:checked");
+            // jq_thisradio_checked = $(jq_radios_checked.get(last_item-1));
+            // console.log(jq_thisradio_checked)
+            // js_items_answer[last_item-1] = jq_thisradio_checked.val();
+            // console.log("last_item = ",last_item)
+            // console.log(jq_thisradio_checked.val());
+            // console.log(js_items_answer);
             task_quest.show();
-            // if(id_num == task_quest.id)
+            last_item = id_num
+        })
+        $(":radio").click(function(){
+            jq_radio = $(this);
+            radio_str = jq_radio.val().split(",");
+            js_items_answer[radio_str[0]-1] = radio_str[1];
+            console.log(js_items_answer);
+        })
+        $("#task_finished").click(function(){
+            console.log("js_task_id = ",js_task_id)
+            console.log("js_task_items_num = ",js_task_items_num)
+            console.log("js_items_answer = ",js_items_answer)
+            console.log("js_task_type = ",js_task_type)
+            $.ajax({
+                url:'../../task_operate_complete/',
+                type:'PUT',
+                dataType:'json',
+                data:JSON.stringify({
+                    "task_id":js_task_id,
+                    "task_items_num":js_task_items_num,
+                    "items_answer":js_items_answer,
+                    "task_type":js_task_type,
+                }),
+                headers:{'X-CSRFToken':"{{csrf_token}}"},
+                success:function(data){
+                    console.log("=======================\nTask submit!")
+                }
+            })
         })
     })
 </script>
@@ -87,7 +132,7 @@
             </a>
           </li> -->
           {% for i in task_item_range %}
-          <li class="page-item"><a class="page-link">{{i}}</a></li>
+          <li class="page-item" id="test{{i}}"><a class="page-link">{{i}}</a></li>
           <!-- <li class="page-item"><a class="page-link" href="#">2</a></li>
           <li class="page-item"><a class="page-link" href="#">3</a></li>
           <li class="page-item"> -->
@@ -111,21 +156,11 @@
             <label class="custom-control-label" for="{{quest.quest_id}}+{{quest_option}}">{{quest_option}}</label>
         </div>
         <!-- <div><input type="radio" class="task-item" id="0" name = "quest_option" value = "{{quest_option}}">{{quest_option}}</input></div> -->
-        {% endfor %}
-        
+        {% endfor %}  
     </div>
     {% endfor %}
-    <form class="form-horizontal" method="POST" enctype="multipart/form-data" style = "padding-top:20px;margin-left:39px;">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="exampleFormControlInput1">task file</label>
-            <input type="file" class="form-control" id="taskfile" name="taskfile">
-        </div>
-        <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
-            <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">提交任务</button>
-        </div>
-    </form>
-    <a href="../../task_upload_finish/{{req_id}}/"><button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">结束任务</button></a>
+    <button type="button" class="btn btn-outline-primary" id="task_finished">完成题目</button>
+    
 </div>
 
 {% endblock %}

@@ -555,8 +555,9 @@ def process_select_answer(answer:List[str], username, user_id, task_id) -> None:
     
     print("创建任务文件成功")
 
-    f = open(root + '/' + str(task_id) + '/' + filename, 'wb')
+    f = open(root + '/' + str(task_id) + '/' + filename, 'w',encoding="utf-8")
     print("file open success")
+    print("answer_list",answer_list)
     f.writelines(answer_list)
     f.close()
     print("写入完毕")
@@ -572,8 +573,10 @@ def process_mark_answer() -> None:
 def process_answer(answer, username, user_id, task_id):
     tsk = get_task_by_task_id(task_id)
     task_type = tsk.task_type
-
-    if task_type == 1 and task_type == 3 and task_type == 4:
+    print("process_answer")
+    print("task_type =",task_type)
+    if task_type == 1 or task_type == 3 or task_type == 4:
+        print("task_type =",task_type)
         process_select_answer(answer, username, user_id, task_id)
     elif task_type == 2:
         process_mark_answer()
