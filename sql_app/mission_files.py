@@ -287,7 +287,8 @@ class quest_list:
         self.quest_lists.append(quest)
     
     def get_Quest_by_questID(self, id:int) -> quest_info:
-        new_quest:quest_info = self.quest_lists[id - 1]
+        # print("self.quest_lists = ",self.quest_lists)
+        new_quest:quest_info = self.quest_lists[id-1]
         if new_quest.quest_id == id:
             return new_quest
         else:
@@ -455,14 +456,17 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
         print("打开文件成功")
 
     lines = f.readlines()
-    quest_num = lines[0].strip('\n')
+    # 加上int(),wyh,2023.1.7
+    quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
-    for index in range(1, quest_num - 1):
+    # 删去quest_num后的-1，wyh2023.1.7
+    for index in range(1, quest_num):
         info = lines[index].strip('\n')
         infos = info.split(',')
         quest_id = int(infos[0])
         quest_text = infos[1]
-        music_num = infos[2]
+        # 添加int(),wyh,2023.1.7
+        music_num = int(infos[2])
         option_num = int(infos[3])
         
         quest = quest_info(quest_id, quest_text, option_num, music_num)

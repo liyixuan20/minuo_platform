@@ -75,6 +75,10 @@
                 }
             })
         })
+        $("audio").click(function(){
+            // this.pause()
+
+        })
     })
 </script>
 <nav class="navbar navbar-expand-lg navbar-light justify-content-between sticky-top" style="background: linear-gradient(to right,thistle,cornsilk,#e3f2fd);">
@@ -148,7 +152,17 @@
     <div class="task-quest" id="{{quest.quest_id}}">
         <div class="task-quest-NO">{{quest.quest_id}}</div>
         <p class = "task-quest-description">{{quest.quest_text}}</p>
+        {% if task_type == 1 %}
         <img class="img-fluid" src="{{quest.copy_path.0}}" style="width: 120px; height:auto;">
+        {% elif task_type == 2 %}
+        <div >图片标注用图</div>
+        {% elif task_type == 3 %}
+        <div>文字选择题</div>
+        {% elif task_type == 4 %}
+        <audio src="/media_url/UnderTidesBattle.mp3" controls preload="auto"></audio>
+        {% else %}
+        <div> 任务类型错误 </div>
+        {% endif %}
         <!-- <div class="task-source">{{quest.quest_pics_path_list.0}}</div> -->
         {% for quest_option in quest.option_list %}
         <div class="custom-control custom-radio">
@@ -159,8 +173,7 @@
         {% endfor %}  
     </div>
     {% endfor %}
-    <button type="button" class="btn btn-outline-primary" id="task_finished">完成题目</button>
-    
+    <button type="button" class="btn btn-outline-primary" id="task_finished">完成题目</button>/
 </div>
 
 {% endblock %}
