@@ -8,7 +8,8 @@ import zipfile
 import sys
 import getpass
 import shutil
-from typing import List
+import pygame
+from typing import List, Dict
 from .crud import *
 
 session = SessionLocal()
@@ -166,11 +167,12 @@ def create_user_portrait_file(user_id):
     return 
  
 def new_protrait_file(path, user_id, filename):
-    #允许多次上传文件（允许同名）
+    #允许多次上传文件
     if not os.path.exists(path):
         os.makedirs(path)
 
-
+    if os.path.exists(path + '/' + filename):
+        return -1
     try:
         f = open(path + '/' + filename, 'w')
         f.close()
@@ -180,13 +182,16 @@ def new_protrait_file(path, user_id, filename):
     por = Portrait_files(user_id = user_id, file_name = filename)
     session.add(por)
     session.commit()
-    return
+    return 0
 
 
 def upload_portrait(user_id, filename, file):
     create_user_portrait_file(user_id)
     root = './portrait_storage/' + str(user_id)
-    new_protrait_file(root, user_id, filename)
+    signal = new_protrait_file(root, user_id, filename)
+    if signal == -1:
+        delete_portrait_file(user_id, filename)
+        new_protrait_file(root, user_id, filename)
     file_content = ''
     # file_content = file.read()
     # try:
@@ -205,6 +210,7 @@ def upload_portrait(user_id, filename, file):
         #     f.write(i)
     print("f write success")
     f.close()
+    copy_portrait_files(user_id, filename)
     return
 
 def delete_portrait_file(user_id, filename):
@@ -225,6 +231,33 @@ def query_portrait(user_id : int) -> str:
     else:
         
         return q.file_name
+
+def copy_portrait_files(user_id, filename):
+    src_path = './portrait_storage/' + str(user_id) + '/' +filename
+    tar_path = './media/' + filename
+    if os.path.exists(tar_path):
+        return
+    shutil.copyfile(src_path, tar_path)
+    print("拷贝文件结束")
+    copy_path = '/media_url/' + filename
+    return 
+
+def remove_other_portrait(user_id):
+    q = session.query(Portrait_files).filter(Portrait_files.user_id == user_id).one_or_none()
+    filename = q.file_name
+    names = os.listdir('./media/')
+    for name in names:
+        if name != filename and name != 'necoru.jpg':
+            os.remove('./media/' + name)
+    return
+
+def update_portrait_files(user_id, filename):
+    remove_other_portrait(user_id)
+    q = query_portrait(user_id)
+    if  (not os.path.exists( './media/' + filename)) and (q != ''):
+        copy_portrait_files(user_id, filename)
+    
+    return
 
 #-------------------------------------------------------------------------------------------------------------
 class quest_info:
@@ -247,6 +280,8 @@ class quest_list:
         self.quest_type = quest_type
         self.task_id = task_id
         self.task_info = ''
+        self.task_name = ''
+        self.reward = 0
     
     def append_quest(self, quest:quest_info) -> None:
         self.quest_lists.append(quest)
@@ -263,6 +298,8 @@ class quest_list:
 #-------------------------------------------不同类任务文件处理上传及作答上传--------------------------------------------
 
 def zipfiles(path, filename):
+    if not os.path.exists(path +'/' + filename):
+        return -1
     if not filename.split('.')[1] == 'zip':
         return -4
     zip_path = path + '/' + filename 
@@ -284,20 +321,22 @@ def process_select_img_file(filename, username, user_id, task_state, task_id, qu
     k = zipfiles(path, filename)
     if k == -4:
         print("zip格式错误")
+    elif k == -1:
+        print("上传的文件不存在")
     
     if not os.path.exists(path + '/' + 'items.txt'):
         print("txt说明文件不存在")
     try: 
-        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+        f = open(path + '/' + 'items.txt', encoding = 'utf-8')
     except IOError:
         print("读取文件失败")
     else :
         print("打开文件成功")
 
     lines = f.readlines()
-    quest_num = lines[0].strip('\n')
+    quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
-    for index in range(1, quest_num - 1):
+    for index in range(1, quest_num + 1):
         info = lines[index].strip('\n')
         infos = info.split(',')
         quest_id = int(infos[0])
@@ -306,11 +345,12 @@ def process_select_img_file(filename, username, user_id, task_state, task_id, qu
         
         quest = quest_info(quest_id, quest_text, option_num)
 
-        for j in range(3, 3 + option_num - 1):
+        for j in range(3, 3 + option_num ):
             quest.option_list.append(infos[j])
 
         pic_name = infos[3 + option_num]
         pic_path = path + '/src/' + pic_name 
+        print("pic_path", pic_path)
         quest.src_list.append(pic_path)
         que_list.append_quest(quest)
     
@@ -329,16 +369,16 @@ def process_img_mark_files(filename, username, user_id, task_state, task_id, que
     if not os.path.exists(path + '/' + 'items.txt'):
         print("txt说明文件不存在")
     try: 
-        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+        f = open(path + '/' + 'items.txt', encoding = 'utf-8')
     except IOError:
         print("读取文件失败")
     else :
         print("打开文件成功")
 
     lines = f.readlines()
-    quest_num = lines[0].strip('\n')
+    quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
-    for index in range(1, quest_num - 1):
+    for index in range(1, quest_num + 1):
         info = lines[index].strip('\n')
         infos = info.split(',')
         quest_id = int(infos[0])
@@ -369,14 +409,14 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
     if not os.path.exists(path + '/' + 'items.txt'):
         print("txt说明文件不存在")
     try: 
-        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+        f = open(path + '/' + 'items.txt', encoding = 'utf-8')
     except IOError:
         print("读取文件失败")
     else :
         print("打开文件成功")
 
     lines = f.readlines()
-    quest_num = lines[0].strip('\n')
+    quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
     for index in range(1, quest_num - 1):
         info = lines[index].strip('\n')
@@ -387,7 +427,7 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
         
         quest = quest_info(quest_id, quest_text, option_num)
 
-        for j in range(3, 3 + option_num - 1):
+        for j in range(3, 3 + option_num):
             quest.option_list.append(infos[j])
 
 
@@ -408,7 +448,7 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
     if not os.path.exists(path + '/' + 'items.txt'):
         print("txt说明文件不存在")
     try: 
-        f = open(path + '/' + 'items.txt', encoding = 'gbk')
+        f = open(path + '/' + 'items.txt', encoding = 'utf-8')
     except IOError:
         print("读取文件失败")
     else :
@@ -427,11 +467,11 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
         
         quest = quest_info(quest_id, quest_text, option_num, music_num)
 
-        for j in range(4, 4 + music_num - 1):
+        for j in range(4, 4 + music_num ):
             audio_path = path + '/src/' + infos[j]
             quest.src_list.append(audio_path)
         
-        for i in range(4 + music_num, 4 + music_num + option_num - 1):
+        for i in range(4 + music_num, 4 + music_num + option_num ):
             quest.option_list.append(infos[i])
         
         
@@ -442,16 +482,18 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
 
 def copy_quest_files(que_list: quest_list) -> None:
     #copy src文件到media 下
-    quest_num:int = quest_list.quest_num
+    quest_num:int = que_list.quest_num
     media_path = './media/'
-    for i in range(1, quest_num):
+    for i in range(1, quest_num + 1):
         quest:quest_info = que_list.get_Quest_by_questID(i)
         for path in quest.src_list:
             filename = path.split('/')[-1]
+
+            tar = media_path + filename
+            copypath = '/media_url/' + filename
+            quest.copy_path.append(copypath)
             if os.path.exists(media_path + filename):
                 continue
-            tar = media_path + filename
-            quest.copy_path.append(tar)
             shutil.copyfile(path, tar)
             
     print("拷贝文件结束")
@@ -460,8 +502,8 @@ def copy_quest_files(que_list: quest_list) -> None:
 
 def delete_copy_files_by_task_id(que_list:quest_list) -> None:
     #删除之前复制过来的文件
-    quest_num:int = quest_list.quest_num
-    for i in range(1, quest_num):
+    quest_num:int = que_list.quest_num
+    for i in range(1, quest_num + 1):
         quest:quest_info = que_list.get_Quest_by_questID(i)
         for path in quest.copy_path:
             os.remove(path)
@@ -485,5 +527,64 @@ def process_quest_files(username : str, user_id : int, task_id : int) -> quest_l
 
     que_list.task_id = task_id
     que_list.task_info = tsk.task_info
+    que_list.task_name = tsk.name
+    que_list.reward = tsk.reward
+    copy_quest_files(que_list)
+    
     return que_list
 
+
+#---------------------------------------------提交用户作答-----------------------------------------------------------
+
+def process_select_answer(answer:Dict[str, int], username, user_id, task_id) -> None:
+
+    answer_list:List[str] = []
+    ans_num = len(answer)
+    for index in range(1, ans_num + 1):
+        order = str(index)
+        line = order + ':' + answer[order] + '\n'
+        answer_list.append(line)
+    root = get_file_root(user_id, username, 1)
+    filename = 'answer_for_%s.txt' % str(task_id)
+    task_state = 1
+    if os.path.exists(root + '/' + str(task_id) + '/' + filename):
+        print("file already exists")
+        return
+    else:
+        new_file(filename, root, user_id, task_id, task_state)
+    
+    print("创建任务文件成功")
+
+    f = open(root + '/' + str(task_id) + '/' + filename, 'wb')
+    print("file open success")
+    f.writelines(answer_list)
+    f.close()
+    print("写入完毕")
+    
+    finish_task(task_id)
+    return
+
+def process_mark_answer() -> None:
+    pass
+
+
+
+def process_answer(answer, username, user_id, task_id):
+    tsk = get_task_by_task_id(task_id)
+    task_type = tsk.task_type
+
+    if task_type == 1 and task_type == 3 and task_type == 4:
+        process_select_answer(answer, username, user_id, task_id)
+    elif task_type == 2:
+        process_mark_answer()
+    
+#—-------------------------------------------后台播放音频-------------------------------------
+
+def audio_play(path:str, volume=0.5):
+    src_path = './media/' + path.split('/')[-1]
+    pygame.mixer.init()
+    pygame.mixer.music.load(src_path)
+    pygame.mixer.music.set_volume(volume)
+    pygame.mixer.music.play()
+    print("playing audio")
+    return

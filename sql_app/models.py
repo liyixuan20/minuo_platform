@@ -1,4 +1,4 @@
-from .database import Base, SessionLocal, bases
+from database import Base, SessionLocal, bases
 from datetime import datetime
 from sqlalchemy import Column,String,Integer, DateTime
 

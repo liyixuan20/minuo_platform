@@ -75,6 +75,7 @@ def portrait_upload(request):
         if q != '':
             delete_portrait_file(user.id, q)
         upload_portrait(user.id, filename, file)
+        update_portrait_files(user.id,filename)
         return redirect('profile')
     return render(request, 'upload_portrait.html')
         

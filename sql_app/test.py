@@ -93,4 +93,5 @@ print(f"root accepted task {task_id} finished by carol")
 # 测试任务文件解析
 
 if __name__ == '__main__':
-    
+    create_task(40, 'tsk11', 10, 1, "lalalal")
+
