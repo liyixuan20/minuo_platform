@@ -211,8 +211,12 @@ def get_task_by_task_id(task_id):
     return session.query(Task).filter(Task.id == task_id).one_or_none()
 
 def get_request_task_info(user_id):
-    req = session.query(Task).join(Request, Task.id == Request.task_id).filter(Request.user_id == user_id).all()
-    return req
+    reqs = session.query(Request).filter(Request.user_id == user_id).all()
+    tsk = []
+    for req in reqs:
+        tk = session.query(Task).filter(Task.id == req.task_id).one_or_none()
+        tsk.append(tk)
+    return tsk
 
 def get_receive_by_id(rec_id):
     rec = session.query(Receive).join(Task_files, Task_files.user_id == Receive.user_id).filter(Receive.id == rec_id).one_or_none()
