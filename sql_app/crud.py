@@ -114,10 +114,16 @@ def accept_task(task_id):
     
     
     tsk.status = 0
-    reqs = session.query(Request).filter(Request.task_id == task_id).all()
-    if reqs != None:
-        tsk.status = 1
+
     session.commit()
+    return 0
+def update_task(task_id):
+    tsk = session.query(Task).filter(Task.id==task_id).one_or_none()
+    reqs = session.query(Request).filter(Request.task_id == task_id).all()
+    if tsk.status == 0:
+        if reqs != None:
+            tsk.status = 1
+
     return 0
 
 def ultimate_finish_task(task_id):
@@ -212,12 +218,14 @@ def get_task_by_task_id(task_id):
     #根据id返回task
     return session.query(Task).filter(Task.id == task_id).one_or_none()
 class task_request_info:
-    def __init__(self, request_id:int, task_name:str, owner_id:int,  create_at, reward) -> None:
+    def __init__(self, request_id:int, task_name:str, owner_id:int,  create_at, reward, status,req_id) -> None:
         self.id = request_id
         self.name = task_name
         self.reward = reward
         self.owner_id = owner_id
         self.create_at = create_at
+        self.status = status
+        self.req_id = req_id
 
 def get_request_task_info(user_id):
     reqs = session.query(Request).filter(Request.user_id == user_id).all()
@@ -226,7 +234,7 @@ def get_request_task_info(user_id):
         return None
     for req in reqs:
         tk = session.query(Task).filter(Task.id == req.task_id).one_or_none()
-        tri = task_request_info(req.id, tk.name, tk.owner_id, req.create_at, tk.reward)
+        tri = task_request_info(tk.id, tk.name, tk.owner_id, req.create_at, tk.reward, tk.status, req.id)
         tsk.append(tri)
     return tsk
 
@@ -234,8 +242,3 @@ def get_receive_by_id(rec_id):
     rec = session.query(Receive).join(Task_files, Task_files.user_id == Receive.user_id).filter(Receive.id == rec_id).one_or_none()
     
     return rec
-
-def way_to_flash_db():
-    
-    session.query(Task).filter(Task.id == 0).first()
-    return
