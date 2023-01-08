@@ -9,36 +9,126 @@
 </head>
 <script>
         $().ready(function(){
-            $("#hidden").hide()
+            // $("#hidden").hide()
             $(".alert").hide()
-            $("small").hide()
-            var password = "password";
-            var password2 = "password2";
-            $("#password").blur(function(){
-
+            $(".valid-feedback").hide()
+            $(".invalid-feedback").hide()
+            var username='';
+            var password='';
+            var password2='';
+            $("input").click(function(){
+              $(".alert").hide()
+            })
+            $("input#username").blur(function(){
+              $(".alert").hide()
+              username = $(this).val();
+              if(username==null){
+                $(".valid-feedback.username-info").hide(); 
+                $(".invalid-feedback.username-info").show();
+              }
+              else{
+                $(".invalid-feedback.username-info").hide();
+                $(".valid-feedback.username-info").show(); 
+              }
+              // console.log(username_info)
+              // console.log(username)
+            })
+            $("input#password").blur(function(){
+              $(".alert").hide()
               password = $(this).val();
-              console.log(password)
+              if(password==null){
+                $(".valid-feedback.password-info").hide();
+                $(".invalid-feedback.password-info").show();
+              }
+              else{
+                $(".invalid-feedback.password-info").hide();
+                $(".valid-feedback.password-info").show();
+              }
+              // console.log(password)
             })
             $("input#password2").blur(function(){
+              $(".alert").hide()
               password2 = $(this).val();
-              console.log("password2",password2)
+              // console.log("password2",password2)
                 if(password!=password2){
-                  $("small#passwordHelpBlock").show();
+                  $(".invalid-feedback.password2-info").show();
+                  $(".valid-feedback.password2-info").hide();
                 }
                 else{
-                  $("small#passwordHelpBlock").hide();
+                  $(".invalid-feedback.password2-info").hide();
+                  $(".valid-feedback.password2-info").show();
                 }
+            })
+            $(".submit-info").click(function(){
+              if(username == null){
+                $(".valid-feedback.username-info").hide(); 
+                $(".invalid-feedback.username-info").show();
+              }
+              else if(password == null){
+                $(".valid-feedback.password-info").hide();
+                $(".invalid-feedback.password-info").show();
+              }
+              else if(password!=password2){
+                $(".invalid-feedback.password2-info").show();
+                $(".valid-feedback.password2-info").hide();
+              }
+              else{
+                $(".alert.signup-ing").show();
+                $.ajax({
+                    url:'../signup/',
+                    type:'PUT',
+                    dataType:'json',
+                    data:JSON.stringify({
+                        "username":username,
+                        "password":password,
+                    }),
+                    headers:{'X-CSRFToken':"{{csrf_token}}"},
+                    success:function(data){
+                      if(data['res']=='ok'){
+                        $(".alert.signup-ing").hide();
+                        $(".alert.alert-success").show();
+                      }
+                      else{
+                        $(".alert.signup-ing").hide();
+                        $(".alert.alert-danger").show();
+                      }
+                        
+                    }
+                })
+              }
+              
             })
         })
 </script>
 <body style="height:100%;"background="/media_url/necoru.jpg">
-<div class = "jq-message" id = "hidden">{{ message }}</div>
+<div class = "jq-message" >{{ message }}</div>
 <div class="alert alert-success" id="hidden" role="alert">
   注册成功,请登录
 </div>
 <div class="alert alert-danger" id="hidden" role="alert">
-  注册失败，请重试（可能是用户名重复）
+  注册失败，请换一个用户名再试试
 </div>
+<div class="alert alert-primary signup-ing" role="alert">
+  注册中...
+</div>
+<!-- <div class="modal fade" id="myModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myModelLabel">成功啦！</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        恭喜你！注册成功！
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">立即登录</button>
+      </div>
+    </div>
+  </div>
+</div> -->
 <div class="card" style="width:480px;border-radius: 12px;height:554px;top:150px;bottom:150px;left:0;right:0 ;margin: auto;
 position: absolute;font-family: PingFang-SC-Regular,Helvetica,'Microsoft Yahei','微软雅黑';">
     
@@ -46,41 +136,48 @@ position: absolute;font-family: PingFang-SC-Regular,Helvetica,'Microsoft Yahei',
   <p style="margin-left:39px;">已有账号？<a href="{% url 'login' %}">Log in</a></p>
   <form class="form-horizontal" method="POST" style = "padding-top:20px;margin-left:39px;">
     {% csrf_token %}
-    <div class="form-group">
-      <label for="username" class="col-sm-3 control-label" style="padding:0;">用户名</label>
-      <div style="margin-right:39px;">
-        <input type="text" class="form-control" name="username" id="username" placeholder="Username" style="margin-bottom:32px;">
-        <div class="valid-feedback" id="hidden">
+    <div class="form-group"style="border-bottom:35px" >
+      <label for="username" class="col-sm-3 control-label" style="padding:0">用户名</label>
+      <div style="margin-right:39px;padding-bottom: 15px;">
+        <input type="text" class="form-control" name="username" id="username" placeholder="Username" >
+        <div class="valid-feedback username-info" id="hidden" style="display:flex;position: absolute;">
           Looks good!
+        </div>
+        <div id="hidden" class="invalid-feedback username-info"style="display:flex;position: absolute;">
+          用户名不能为空
         </div>
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group"style="margin-bottom:35px">
       <label for="password" class="col-sm-3 control-label"style="padding:0;">密码</label>
-      <div style="margin-right:39px;">
-        <input type="password" class="form-control" name="password" id="password" placeholder="Password" style="margin-bottom:32px;">
-        <div class="valid-feedback" id="hidden">
-          Looks good!
-        </div>
+      <div style="margin-right:39px;border-bottom:35px">
+        <input type="password" class="form-control" name="password" id="password" placeholder="Password" >
+      </div>
+      <div class="valid-feedback password-info" id="hidden"style="display:flex;position: absolute;">
+        Looks good!
+      </div>
+      <div id="hidden" class="invalid-feedback password-info"style="display:flex;position: absolute;">
+        密码不能为空
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group"style="margin-bottom:35px">
       <label for="password2" class="col-sm-3 control-label"style="padding:0;">确认密码</label>
-      <div style="margin-right:39px;">
-        <input type="password" class="form-control" name="password2" id="password2" placeholder="Password" style="margin-bottom:32px;">
-        <div class="valid-feedback" id="hidden">
-          Looks good!
-        </div>
-        <div id="hidden" class="invalid-feedback">
-          两次密码不相同！
-        </div>
+      <div style="margin-right:39px;border-bottom:35px">
+        <input type="password" class="form-control" name="password2" id="password2" placeholder="Password" >
+      </div>
+      <div class="valid-feedback password2-info" id="hidden"style="display:flex;position: absolute;">
+        Looks good!
+      </div>
+      <div id="hidden" class="invalid-feedback password2-info"style="display:flex;position: absolute;">
+        两次密码不相同！
       </div>
       
-    </div>
-    <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
-        <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">注册</button>
-    </div>
+    
   </form>
+</div>
+<div style="padding-top:15px;margin-left:42px;margin-right:42px;">
+    <button class="btn btn-primary btn-block submit-info"style="border-radius: 30px;height:50px;display: block;margin-right:30px;">注册</button>
+</div>
   
   {% comment %} 
   <form method="POST">
