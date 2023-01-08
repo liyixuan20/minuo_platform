@@ -94,12 +94,8 @@ def finish_task(task_id):
 
 def accept_task(task_id):
     # 标记task为accepted
+
     tsk = session.query(Task).filter(Task.id==task_id).one_or_none()
-    tsk.status = 0
-    reqs = session.query(Request).filter(Request.task_id == task_id).all()
-    if reqs != None:
-        tsk.status = 1
-    
     
     # 标记receive为accepted
     rec = session.query(Receive).filter(Receive.task_id==task_id, Receive.task_id==1)
@@ -115,6 +111,12 @@ def accept_task(task_id):
     receiver = session.query(Profile).filter(Profile.user_id==receiver_id)
     receiver.update({Profile.points: Profile.points + reward})
     receiver.update({Profile.credits: Profile.credits + 10})
+    
+    
+    tsk.status = 0
+    reqs = session.query(Request).filter(Request.task_id == task_id).all()
+    if reqs != None:
+        tsk.status = 1
     session.commit()
     return 0
 
