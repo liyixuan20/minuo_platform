@@ -101,83 +101,31 @@
                         </tr>
                     </table>
             
-                    <h3>我发布的</h3>
+                    <h3>历史提交任务</h3>
                     <table id="missions_released">
                         <tr>
-                            <th>任务id</th>
-                            <th>任务名称</th>
-                            <th>任务报酬PT</th>
-                            <th>任务状态</th>
-                            <th>创建时间</th>
+                            <th>用户昵称</th>
+                            <th>用户信誉值</th>
+                            <th>接收状态</th>
+                            <th>提交时间</th>
                         </tr>
-                        {% for t in myTasks %}
+                        {% for t in receives %}
                         <tr>
-                            <td>{{ t.id }}</td>
-                            <td><a href="{% url 'detail' t.id%}">{{ t.name }}</a></td>
-                            <td>{{ t.reward }}</td>
+                            <td>{{ t.nickname }}</td>
+                            <td>{{ t.credits }}</td>
                             <td> 
-                                {% if t.status ==  0%}
-                                <span class="badge badge-primary">尚无申请</span>
-                                {% elif t.status == 1 %}
-                                <span class="badge badge-primary">申请审核中</span>
-                                {% elif t.status == 2 %}
-                                <span class="badge badge-primary">进行中</span>
-                                {% elif t.status == 3 %}
-                                <span class="badge badge-primary">已完成待审核</span>
-                                {% elif t.status == 4 %}
+                                {% if t.status ==  1%}
+                                <span class="badge badge-primary">尚未结算</span>
+                                {% elif t.status == 2%}
                                 <span class="badge badge-primary">已结算</span>
                                 {% endif %}
                             </td>
                             <td>{{ t.create_at }}</td>
                             <td>
-                                <a href="../task_cancel/{{t.id}}/"><button type="button" class="btn btn-outline-danger">取消任务</button></a>
+                                <a href="../receive_download/{{t.id}}/"><button type="button" class="btn btn-outline-danger">下载作答文件</button></a>
                                 {% if t.status == 1 %}
-                                <a href="../task_request_pass/{{t.id}}/"><button type="button" class="btn btn-outline-danger">审核申请</button></a>
-                                {% elif t.status == 3 %}
-                                <a href="../task_complete_page/{{t.id}}/"><button type="button" class="btn btn-outline-danger">前往结算</button></a>
+                                <a href="../task_complete_page/{{ t.task_id }}/"><button type="button" class="btn btn-outline-danger">前往结算</button></a>
                                 {% endif %}
-                                <a href="../receive_list/{{t.id}}/"><button type="button" class="btn btn-outline-danger">查看历史提交作答</button></a>
-                            <td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                    <h3>我申请的</h3>
-                    <table id="missions_request">
-                        <tr>
-                            <th>任务id</th>
-                            <th>任务名称</th>
-                            <th>任务报酬PT</th>
-                            <th>任务状态</th>
-                            <th>发布人id</th>
-                            <th>创建时间</th>
-                        </tr>
-                        {% for req in requests %}
-                        <tr>
-                            <td>{{ req.id }}</td>
-                            <td><a href="{% url 'detail_request' req.id%}">{{ req.name }}</a></td>
-                            <td>{{ req.reward }}</td>
-                            <td> 
-                                {% if req.status ==  0%}
-                                <span class="badge badge-primary">尚无申请</span>
-                                {% elif req.status == 1 %}
-                                <span class="badge badge-primary">申请审核中</span>
-                                {% elif req.status == 2 %}
-                                <span class="badge badge-primary">进行中</span>
-                                {% elif req.status == 3 %}
-                                <span class="badge badge-primary">已完成待审核</span>
-                                {% elif req.status == 4 %}
-                                <span class="badge badge-primary">已结算</span>
-                                {% endif %}
-                            </td>
-                            <td>{{req.owner_id}}</td>
-                            <td>{{req.create_at }}</td>
-                            <td> 
-                                <a href="../task_cancel_request/{{req.id}}/"><button type="button" class="btn btn-outline-danger">取消任务</button></a>
-                                {% if req.status == 2 %}
-                                <a href="../task_operate/{{req.id}}/"><button type="button" class="btn btn-outline-danger">执行任务</button></a>
-                                <a href="../task_upload/{{req.id}}/"><button type="button" class="btn btn-outline-danger">提交任务</button></a>
-                                {% endif %}
-
                             <td>
                         </tr>
                         {% endfor %}
