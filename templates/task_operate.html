@@ -7,11 +7,13 @@
     <!-- <link rel="stylesheet" type="text/css" href="/static/picjqshow_jb51net/css/jquery.Jcrop.css"/>
     <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery.Jcrop.js"></script> -->
+    
     <link rel="stylesheet" type="text/css" href="/static/Jcrop/jcrop.css"/>
     <link rel="stylesheet" type="text/css" href="/static/Jcrop/jcrop.dev.css"/>
     <script type="text/javascript" src="/static/Jcrop/jcrop.js"></script>
     <script type="text/javascript" src="/static/Jcrop/jcrop.dev.js"></script>
     <script type="text/javascript" src="/static/jquery-3.6.3.js"></script>
+    
 </head>
 <script>
     var js_task_id = 0 ;
@@ -61,14 +63,16 @@
             last_item = id_num
             jq_img_select_str = "img-select"+String(last_item)
             console.log("jq_img_select_str=",jq_img_select_str)
-            const jq_Jcrop_imgselect = Jcrop.attach(jq_img_select_str);
-            jq_Jcrop_imgselect.listen("crop.change",(widget,e)=>{
-                js_items_answer_x1[last_item-1] = widget.pos["x"];
-                js_items_answer_y1[last_item-1] = widget.pos["y"];
-                js_items_answer_x2[last_item-1] = widget.pos["x"]+widget.pos["w"];
-                js_items_answer_y2[last_item-1] = widget.pos["y"]+widget.pos["h"];
-                console.log("clicked",last_item,widget.pos);
-            });
+            if(js_task_type==2){
+                const jq_Jcrop_imgselect = Jcrop.attach(jq_img_select_str);
+                jq_Jcrop_imgselect.listen("crop.change",(widget,e)=>{
+                    js_items_answer_x1[last_item-1] = widget.pos["x"];
+                    js_items_answer_y1[last_item-1] = widget.pos["y"];
+                    js_items_answer_x2[last_item-1] = widget.pos["x"]+widget.pos["w"];
+                    js_items_answer_y2[last_item-1] = widget.pos["y"]+widget.pos["h"];
+                    console.log("clicked",last_item,widget.pos);
+                });
+            }
         })
 
         // $(jq_img_select_str).imgAreaSelect({
@@ -80,14 +84,17 @@
         //     console.log("图片框选1")
 
         // })
-        const jq_Jcrop_imgselect = Jcrop.attach(jq_img_select_str);
-        jq_Jcrop_imgselect.listen("crop.change",(widget,e)=>{
-            js_items_answer_x1[0] = widget.pos["x"];
-            js_items_answer_y1[0] = widget.pos["y"];
-            js_items_answer_x2[0] = widget.pos["x"]+widget.pos["w"];
-            js_items_answer_y2[0] = widget.pos["y"]+widget.pos["h"];
-            console.log(widget.pos);
-        });
+        if(js_task_type==2){
+            const jq_Jcrop_imgselect = Jcrop.attach(jq_img_select_str);
+            jq_Jcrop_imgselect.listen("crop.change",(widget,e)=>{
+                js_items_answer_x1[0] = widget.pos["x"];
+                js_items_answer_y1[0] = widget.pos["y"];
+                js_items_answer_x2[0] = widget.pos["x"]+widget.pos["w"];
+                js_items_answer_y2[0] = widget.pos["y"]+widget.pos["h"];
+                console.log(widget.pos);
+            });
+        }
+        
         $(":radio").click(function(){
             jq_radio = $(this);
             radio_str = jq_radio.val().split(",");
@@ -241,7 +248,7 @@
         {% endfor %}  
     </div>
     {% endfor %}
-    <button type="button" class="btn btn-outline-primary" id="task_finished">完成题目</button>/
+    <button type="button" class="btn btn-outline-primary" id="task_finished">完成题目</button>
 </div>
 
 {% endblock %}

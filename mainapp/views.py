@@ -340,6 +340,7 @@ def task_operate_complete(request):
                 answer=str(x1_list[i])+','+str(y1_list[i])+','+str(x2_list[i])+','+str(y2_list[i])
                 answer_list.append(answer)
             print("pic-select answer = ",answer_list)
+            process_answer(answer_list, username, user_id, task_id)
             return JsonResponse({'res':'ok'})
 
 
