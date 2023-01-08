@@ -244,6 +244,8 @@ def copy_portrait_files(user_id, filename):
 
 def remove_other_portrait(user_id):
     q = session.query(Portrait_files).filter(Portrait_files.user_id == user_id).one_or_none()
+    if q == None:
+        return
     filename = q.file_name
     names = os.listdir('./media/')
     for name in names:

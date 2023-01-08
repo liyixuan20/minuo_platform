@@ -109,7 +109,7 @@ def accept_task(task_id):
     q = session.query(Profile.user_id)
 
     receiver_id = q.join(Receive, Profile.user_id==Receive.user_id).filter(Receive.task_id==task_id).scalar()
-    req = session.query(Request).filter(Request.task_id == task_id, Request.user_id == receiver.id)
+    req = session.query(Request).filter(Request.task_id == task_id, Request.user_id == receiver_id)
     req.delete()
     
     receiver = session.query(Profile).filter(Profile.user_id==receiver_id)
