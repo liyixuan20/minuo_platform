@@ -2,11 +2,16 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
 <head>
-    <script type="text/javascript" src="/static/jquery-3.6.3.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="/static/picjqshow_jb51net/css/jquery.Jcrop.css"/>
+    
+    <!-- <link rel="stylesheet" type="text/css" href="/static/picjqshow_jb51net/css/jquery.Jcrop.css"/>
     <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery.Jcrop.js"></script>
+    <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery.Jcrop.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="/static/Jcrop/jcrop.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/Jcrop/jcrop.dev.css"/>
+    <script type="text/javascript" src="/static/Jcrop/jcrop.js"></script>
+    <script type="text/javascript" src="/static/Jcrop/jcrop.dev.js"></script>
+    <script type="text/javascript" src="/static/jquery-3.6.3.js"></script>
 </head>
 <script>
     var js_task_id = 0 ;
@@ -18,7 +23,7 @@
     var js_items_answer_y2 = new Array();
     var js_task_type = 0;
     var last_item = 1;
-    var jq_img_select_str="#img-select1";
+    var jq_img_select_str="img-select1";
     var jcropApi;
     $().ready(function(){
         $(".task-quest").hide();
@@ -54,13 +59,15 @@
             // console.log(js_items_answer);
             task_quest.show();
             last_item = id_num
-            jq_img_select_str = "#img-select"+String(last_item)
+            jq_img_select_str = "img-select"+String(last_item)
             console.log("jq_img_select_str=",jq_img_select_str)
-            $(jq_img_select_str).Jcrop({
-                allowSelect: true,
-                baseClass: 'jcrop'
-                }, function() {
-                jcropApi = this;
+            const jq_Jcrop_imgselect = Jcrop.attach(jq_img_select_str);
+            jq_Jcrop_imgselect.listen("crop.change",(widget,e)=>{
+                js_items_answer_x1[last_item-1] = widget.pos["x"];
+                js_items_answer_y1[last_item-1] = widget.pos["y"];
+                js_items_answer_x2[last_item-1] = widget.pos["x"]+widget.pos["w"];
+                js_items_answer_y2[last_item-1] = widget.pos["y"]+widget.pos["h"];
+                console.log("clicked",last_item,widget.pos);
             });
         })
 
@@ -69,18 +76,18 @@
         //     // resizable:true,
         //     // show:true,
         // });
-        $("#img-select1").click(function(){
-            console.log("图片框选1")
+        // $("#img-select1").click(function(){
+        //     console.log("图片框选1")
 
-        })
-
-        $(jq_img_select_str).Jcrop({
-                allowSelect: true,
-                baseClass: 'jcrop'
-                }, function() {
-                jcropApi = this;
+        // })
+        const jq_Jcrop_imgselect = Jcrop.attach(jq_img_select_str);
+        jq_Jcrop_imgselect.listen("crop.change",(widget,e)=>{
+            js_items_answer_x1[0] = widget.pos["x"];
+            js_items_answer_y1[0] = widget.pos["y"];
+            js_items_answer_x2[0] = widget.pos["x"]+widget.pos["w"];
+            js_items_answer_y2[0] = widget.pos["y"]+widget.pos["h"];
+            console.log(widget.pos);
         });
-
         $(":radio").click(function(){
             jq_radio = $(this);
             radio_str = jq_radio.val().split(",");
@@ -92,21 +99,47 @@
             console.log("js_task_items_num = ",js_task_items_num)
             console.log("js_items_answer = ",js_items_answer)
             console.log("js_task_type = ",js_task_type)
-            $.ajax({
-                url:'../../task_operate_complete/',
-                type:'PUT',
-                dataType:'json',
-                data:JSON.stringify({
-                    "task_id":js_task_id,
-                    "task_items_num":js_task_items_num,
-                    "items_answer":js_items_answer,
-                    "task_type":js_task_type,
-                }),
-                headers:{'X-CSRFToken':"{{csrf_token}}"},
-                success:function(data){
-                    console.log("=======================\nTask submit!")
-                }
-            })
+            if(js_task_type!=2){
+                $.ajax({
+                    url:'../../task_operate_complete/',
+                    type:'PUT',
+                    dataType:'json',
+                    data:JSON.stringify({
+                        "task_id":js_task_id,
+                        "task_items_num":js_task_items_num,
+                        "items_answer":js_items_answer,
+                        "task_type":js_task_type,
+                    }),
+                    headers:{'X-CSRFToken':"{{csrf_token}}"},
+                    success:function(data){
+                        console.log("=======================\nTask submit!")
+                    }
+                })
+            }
+            else{
+                console.log("js_items_answer_x1 = ",js_items_answer_x1)
+                console.log("js_items_answer_y1 = ",js_items_answer_y1)
+                console.log("js_items_answer_x2 = ",js_items_answer_x2)
+                console.log("js_items_answer_y2 = ",js_items_answer_y2)
+                $.ajax({
+                    url:'../../task_operate_complete/',
+                    type:'PUT',
+                    dataType:'json',
+                    data:JSON.stringify({
+                        "task_id":js_task_id,
+                        "task_items_num":js_task_items_num,
+                        "task_type":js_task_type,
+                        "items_answer_x1":js_items_answer_x1,
+                        "items_answer_y1":js_items_answer_y1,
+                        "items_answer_x2":js_items_answer_x2,
+                        "items_answer_y2":js_items_answer_y2,
+                    }),
+                    headers:{'X-CSRFToken':"{{csrf_token}}"},
+                    success:function(data){
+                        console.log("=======================\nTask submit!")
+                    }
+                })
+            }
         })
         $("audio").click(function(){
             // this.pause()

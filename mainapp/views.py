@@ -321,10 +321,26 @@ def task_operate_complete(request):
     if request.method == "PUT":
         data = json.loads(request.body)
         print(data)
-        items_answer = data["items_answer"]
-        task_id = int(data["task_id"])
-        process_answer(items_answer, username, user_id, task_id)
-        return JsonResponse({'res':'ok'})
+        task_type = int(data["task_type"])
+        if task_type!=2:
+            items_answer = data["items_answer"]
+            task_id = int(data["task_id"])
+            process_answer(items_answer, username, user_id, task_id)
+            return JsonResponse({'res':'ok'})
+        else:
+            task_id = int(data["task_id"])
+            task_items_num = int(data["task_items_num"])
+            x1_list = data["items_answer_x1"]
+            y1_list = data["items_answer_y1"]
+            x2_list = data["items_answer_x2"]
+            y2_list = data["items_answer_y2"]
+            answer_list = []
+            for i in range(task_items_num):
+                answer=str(x1_list[i])+','+str(y1_list[i])+','+str(x2_list[i])+','+str(y2_list[i])
+                answer_list.append(answer)
+            print("pic-select answer = ",answer_list)
+            return JsonResponse({'res':'ok'})
+
 
 def front_task_operate(request,req_id):
     user_name = request.user
