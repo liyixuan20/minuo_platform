@@ -120,6 +120,13 @@
                     headers:{'X-CSRFToken':"{{csrf_token}}"},
                     success:function(data){
                         console.log("=======================\nTask submit!")
+                        if (confirm("提交成功!")) {   
+                            console.log("提交成功")   
+                            window.location.href="../../profile/"; 
+                            // window.history.back(-1);
+                        } else {
+                            console.log("留在此页")
+                        }
                     }
                 })
             }
@@ -144,6 +151,12 @@
                     headers:{'X-CSRFToken':"{{csrf_token}}"},
                     success:function(data){
                         console.log("=======================\nTask submit!")
+                        if (confirm("提交成功!")) {   
+                            console.log("提交成功") 
+                            window.history.back(-1);
+                        } else {
+                            console.log("留在此页")
+                        }
                     }
                 })
             }

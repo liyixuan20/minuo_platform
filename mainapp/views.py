@@ -126,16 +126,15 @@ def hwfunc(request):
 
 def signupfunc(request):
     # TODO: 收集email和电话号码（email要验证）
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        password2 = request.POST['password2']
-        if not password == password2:
-            return render(request, 'signup.html', {'message': 'Passwords of 2 input not match.'})
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        print(data)
+        user_name = data['username']
+        pass_word = data['password']
         message = "OK, Please log in."
         try:
             user = User.objects.create_user(
-                username=username, password=password)
+                username=user_name, password=pass_word)
             create_profile(user_id=user.id)
             # change_profile_name(user.id,"moren")
             # change_profile_tel(user.id,"188********")
@@ -144,9 +143,9 @@ def signupfunc(request):
             message = e
         finally:
             if message == "OK, Please log in.":
-                return redirect('login')
+                return JsonResponse({'res':'ok'})
             else:
-                return render(request, "signup.html", {"message": message})
+                return JsonResponse({'res':'fail'})
 
     return render(request, 'signup.html', {})
 
