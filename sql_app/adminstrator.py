@@ -11,4 +11,4 @@ def get_all_user():
     users = User.objects.filter()
     return users
 
-admin.site.register(User)
+

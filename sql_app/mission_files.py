@@ -636,10 +636,10 @@ def audio_play(path:str, volume=0.5):
     print("playing audio")
     return
 
-def delete_task_by_id(task_id):
+def delete_task_info(task_id):
     tsk = session.query(Task).filter(Task.id == task_id).delete()
     reqs = session.query(Request).filter(Request.task_id == task_id).delete()
-    
+   
     session.commit()
 def delete_task_files(task_id):
     #删除特定task
@@ -659,5 +659,11 @@ def delete_task_files(task_id):
     delete_file(filename, root2, owner_id, task_id, 0)
     session.commit()
     delete_task_by_id(task_id)
+
+    return 0
+
+def delete_task_by_id(task_id):
+    delete_task_files(task_id)
+    delete_task_info(task_id)
 
     return 0
