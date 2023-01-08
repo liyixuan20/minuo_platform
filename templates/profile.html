@@ -172,7 +172,7 @@
                             <td>{{req.owner_id}}</td>
                             <td>{{req.create_at }}</td>
                             <td> 
-                                <a href="../task_cancel_request/{{req.id}}/"><button type="button" class="btn btn-outline-danger">取消任务</button></a>
+                                <a href="../task_cancel_request/{{req.req_id}}/"><button type="button" class="btn btn-outline-danger">取消任务</button></a>
                                 {% if req.status == 2 %}
                                 <a href="../task_operate/{{req.id}}/"><button type="button" class="btn btn-outline-danger">执行任务</button></a>
                                 <a href="../task_upload/{{req.id}}/"><button type="button" class="btn btn-outline-danger">提交任务</button></a>

@@ -114,10 +114,16 @@ def accept_task(task_id):
     
     
     tsk.status = 0
-    reqs = session.query(Request).filter(Request.task_id == task_id).all()
-    if reqs != None:
-        tsk.status = 1
+
     session.commit()
+    return 0
+def update_task(task_id):
+    tsk = session.query(Task).filter(Task.id==task_id).one_or_none()
+    reqs = session.query(Request).filter(Request.task_id == task_id).all()
+    if tsk.status == 0:
+        if reqs != None:
+            tsk.status = 1
+
     return 0
 
 def ultimate_finish_task(task_id):
@@ -131,7 +137,7 @@ def ultimate_finish_task(task_id):
 
 def get_all_receive_info(task_id):
     #返回已经结算完的任务事项
-    rec = session.query(Receive).join(Profile, Receive.user_id == Profile.user_id).filter(Receive.task_id == task_id).all()
+    rec = session.query(Receive).filter(Receive.task_id == task_id).all()
     
     return rec
 
@@ -212,12 +218,14 @@ def get_task_by_task_id(task_id):
     #根据id返回task
     return session.query(Task).filter(Task.id == task_id).one_or_none()
 class task_request_info:
-    def __init__(self, request_id:int, task_name:str, owner_id:int,  create_at, reward) -> None:
+    def __init__(self, request_id:int, task_name:str, owner_id:int,  create_at, reward, status,req_id) -> None:
         self.id = request_id
         self.name = task_name
         self.reward = reward
         self.owner_id = owner_id
         self.create_at = create_at
+        self.status = status
+        self.req_id = req_id
 
 def get_request_task_info(user_id):
     reqs = session.query(Request).filter(Request.user_id == user_id).all()
@@ -226,16 +234,30 @@ def get_request_task_info(user_id):
         return None
     for req in reqs:
         tk = session.query(Task).filter(Task.id == req.task_id).one_or_none()
-        tri = task_request_info(req.id, tk.name, tk.owner_id, req.create_at, tk.reward)
+        tri = task_request_info(tk.id, tk.name, tk.owner_id, req.create_at, tk.reward, tk.status, req.id)
         tsk.append(tri)
     return tsk
+class receive_info:
+    def __init__(self,nickname,user_id,credits, create_at, rec_id, task_id, status) -> None:
+        self.nickname = nickname
+        self.user_id = user_id
+        self.credits = credits
+        self.create_at = create_at
+        self.rec_id = rec_id
+        self.task_id = task_id
+        self.status = status
 
 def get_receive_by_id(rec_id):
-    rec = session.query(Receive).join(Task_files, Task_files.user_id == Receive.user_id).filter(Receive.id == rec_id).one_or_none()
-    
-    return rec
+    return session.query(Receive).filter(Receive.id == rec_id).one_or_none()
 
-def way_to_flash_db():
+def get_receive_info(task_id):
+    recs =get_all_receive_info(task_id)
+    rrc = []
+    for rec in recs:
+        user_info = get_profile_by_user_id(rec.user_id)
+        tsk = get_task_by_task_id(rec.task_id)
+        rci = receive_info(user_info.nickname, rec.user_id, user_info.credits, rec.create_at, rec.id, rec.task_id, rec.status)
+        rrc.append(rci)
+
     
-    session.query(Task).filter(Task.id == 0).first()
-    return
+    return rrc

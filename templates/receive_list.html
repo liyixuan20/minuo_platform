@@ -122,7 +122,7 @@
                             </td>
                             <td>{{ t.create_at }}</td>
                             <td>
-                                <a href="../receive_download/{{t.id}}/"><button type="button" class="btn btn-outline-danger">下载作答文件</button></a>
+                                <a href="../receive_download/{{t.rec_id}}/"><button type="button" class="btn btn-outline-danger">下载作答文件</button></a>
                                 {% if t.status == 1 %}
                                 <a href="../task_complete_page/{{ t.task_id }}/"><button type="button" class="btn btn-outline-danger">前往结算</button></a>
                                 {% endif %}

@@ -23,7 +23,8 @@ def listfunc(request):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
     tasks = get_all_task()
     # print("tasks:",tasks)
     objs = {
@@ -61,7 +62,7 @@ def profilefunc(request):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    else:
+    else: 
         porpath = '/media_url/'  + por
     
         
@@ -85,7 +86,8 @@ def portrait_upload(request):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
     objs = {
         "portrait" : porpath
     }
@@ -114,7 +116,8 @@ def hwfunc(request):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
     objs = {
         "portrait" : porpath
     }
@@ -183,7 +186,8 @@ def detailfunc(request, task_id):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
 
     objs = {
         "file":"filepath",
@@ -211,7 +215,8 @@ def detail_request_func(request, pk):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
 
     task = get_task_by_task_id(pk)
             # def download_file_path(username, user_id, task_state, task_id):
@@ -277,7 +282,8 @@ def task_request_pass(request,task_id):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
 
     task_reqs = get_requests_by_task(task_id)
     objs = {
@@ -301,7 +307,8 @@ def front_task_upload(request,req_id):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
 
     obj={
         "req_id":req_id,
@@ -421,7 +428,8 @@ def front_task_operate(request,req_id):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
 
     # (username : str, user_id : int, task_id : int) -> quest_list:
     task = process_quest_files(username,user_id,req_id)
@@ -479,7 +487,8 @@ def front_upload_file(request):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
 
     step = 1
     global  taskname
@@ -541,7 +550,8 @@ def task_complete_page(request,task_id):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else: 
+        porpath = '/media_url/'  + por
 
     objs={
         "task_id":task_id,
@@ -551,6 +561,7 @@ def task_complete_page(request,task_id):
 
 def front_task_cancel(request,task_id):
     delete_task_by_id(task_id)
+
     return redirect('profile')
 
 def task_cancel_request(request,req_id):
@@ -561,6 +572,7 @@ def task_cancel_request(request,req_id):
 
 def front_task_complete(request,task_id):
     accept_task(task_id)
+    update_task(task_id)
     return redirect('profile')
 
 def setProfilefunc(request):
@@ -574,7 +586,7 @@ def setProfilefunc(request):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    else:
+    else: 
         porpath = '/media_url/'  + por
 
     objs = {
@@ -610,14 +622,12 @@ def get_receive_list(request, task_id):
     user_info= get_profile_by_user_id(user.id)
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
-    recs = get_all_receive_info(task_id)
+    else: 
+        porpath = '/media_url/'  + por
+    recs = get_receive_info(task_id)
     task = get_task_by_task_id(task_id)
     profiles =[]
-    for rec in recs:
-        user_id = rec.user_id
-        user = get_profile_by_user_id(user_id)
-        profiles.append(user)
+
     objs = {
         "username": user_info.nickname,
         "tel":user_info.tel,
@@ -630,12 +640,12 @@ def get_receive_list(request, task_id):
     
     return render(request, 'receive_list.html', objs)
 
-def receive_download(request, task_id):
+def receive_download(request, rec_id):
 
-    rec = get_receive_by_id(task_id)
+    rec = get_receive_by_id(rec_id)
     user = User.objects.get(id = rec.user_id)
     #def download_file_path(username, user_id, task_state, task_id):
-    file_path = download_file_path(user.username,user.id,1,task_id)
+    file_path = download_file_path(user.username,user.id,1,rec.task_id)
     # print("file_path",file_path)
     try:
         response = FileResponse(open(file_path, 'rb'))
