@@ -4,7 +4,7 @@ import os
 session = SessionLocal()
 
 def get_profile_by_user_id(user_id):
-    return session.query(Profile).filter(Profile.user_id == user_id).one()
+    return session.query(Profile).filter(Profile.user_id == user_id).one_or_none()
 
 
 
@@ -131,8 +131,8 @@ def ultimate_finish_task(task_id):
 
 def get_all_receive_info(task_id):
     #返回已经结算完的任务事项
-    rec = session.query(Receive).join(Profile, Receive.user_id == Profile.user_id).filter(Receive.task_id == task_id, Receive.status == 2).all()
-
+    rec = session.query(Receive).join(Profile, Receive.user_id == Profile.user_id).filter(Receive.task_id == task_id).all()
+    
     return rec
 
 def reject_task(task_id):
@@ -213,4 +213,8 @@ def get_task_by_task_id(task_id):
 def get_request_task_info(user_id):
     req = session.query(Task).join(Request, Task.id == Request.task_id).filter(Request.user_id == user_id).all()
     return req
+
+def get_receive_by_id(rec_id):
+    rec = session.query(Receive).join(Task_files, Task_files.user_id == Receive.user_id).filter(Receive.id == rec_id).one_or_none()
     
+    return rec
