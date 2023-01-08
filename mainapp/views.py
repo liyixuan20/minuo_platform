@@ -572,6 +572,7 @@ def task_cancel_request(request,req_id):
 
 def front_task_complete(request,task_id):
     accept_task(task_id)
+    update_task(task_id)
     return redirect('profile')
 
 def setProfilefunc(request):
