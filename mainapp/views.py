@@ -551,6 +551,7 @@ def task_complete_page(request,task_id):
 
 def front_task_cancel(request,task_id):
     delete_task_by_id(task_id)
+    way_to_flash_db()
     return redirect('profile')
 
 def task_cancel_request(request,req_id):

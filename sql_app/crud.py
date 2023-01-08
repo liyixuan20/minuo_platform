@@ -192,6 +192,8 @@ def delete_request(task_id, user_id):
     q = session.query(Request).filter(Request.task_id == task_id).all()
     if q == []:
         # tk = session.query(Task).filter(Task.id == task_id).one()
+        print("----------------\n")
+        print("if q = []")
         tsk = session.query(Task).filter(Task.id == task_id).one_or_none()
         # if tk.statue == 1:
         if tsk.status == 1:
@@ -209,16 +211,31 @@ def delete_all_task():
 def get_task_by_task_id(task_id):
     #根据id返回task
     return session.query(Task).filter(Task.id == task_id).one_or_none()
+class task_request_info:
+    def __init__(self, request_id:int, task_name:str, owner_id:int,  create_at, reward) -> None:
+        self.id = request_id
+        self.name = task_name
+        self.reward = reward
+        self.owner_id = owner_id
+        self.create_at = create_at
 
 def get_request_task_info(user_id):
     reqs = session.query(Request).filter(Request.user_id == user_id).all()
     tsk = []
+    if reqs == None:
+        return None
     for req in reqs:
         tk = session.query(Task).filter(Task.id == req.task_id).one_or_none()
-        tsk.append(tk)
+        tri = task_request_info(req.id, tk.name, tk.owner_id, req.create_at, tk.reward)
+        tsk.append(tri)
     return tsk
 
 def get_receive_by_id(rec_id):
     rec = session.query(Receive).join(Task_files, Task_files.user_id == Receive.user_id).filter(Receive.id == rec_id).one_or_none()
     
     return rec
+
+def way_to_flash_db():
+    
+    session.query(Task).filter(Task.id == 0).first()
+    return
