@@ -234,8 +234,3 @@ def get_receive_by_id(rec_id):
     rec = session.query(Receive).join(Task_files, Task_files.user_id == Receive.user_id).filter(Receive.id == rec_id).one_or_none()
     
     return rec
-
-def way_to_flash_db():
-    
-    session.query(Task).filter(Task.id == 0).first()
-    return
