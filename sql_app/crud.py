@@ -1,5 +1,6 @@
 from .models import *
 from django.contrib.auth.models import User
+import os
 session = SessionLocal()
 
 def get_profile_by_user_id(user_id):
@@ -79,6 +80,7 @@ def allow_request_task(request_id):
     rec = Receive(user_id=user_id, task_id=task_id)
     session.add(rec)
     session.commit()
+    return 0
 
 def finish_task(task_id):
     # 标记task为finished
@@ -88,6 +90,7 @@ def finish_task(task_id):
     rec = session.query(Receive).filter(Receive.task_id==task_id, Receive.status==0)
     rec.update({Receive.status: 1})
     session.commit()
+    return 0
 
 def accept_task(task_id):
     # 标记task为accepted
@@ -113,6 +116,7 @@ def accept_task(task_id):
     receiver.update({Profile.points: Profile.points + reward})
     receiver.update({Profile.credits: Profile.credits + 10})
     session.commit()
+    return 0
 
 def ultimate_finish_task(task_id):
     #结束任务，不再接收申请
@@ -121,6 +125,7 @@ def ultimate_finish_task(task_id):
     reqs = session.query(Request).filter(Request.task_id==task_id)
     reqs.delete()
     session.commit()
+    return 0
 
 def get_all_receive_info(task_id):
     #返回已经结算完的任务事项
@@ -191,12 +196,9 @@ def delete_request(task_id, user_id):
             tsk.status = 0
 
     session.commit()
+    return 0
 
-def delete_task_by_id(task_id):
-    #删除特定task
-    session.query(Task).filter(Task.id == task_id).delete()
-    session.query(Request).filter(Request.task_id == task_id).delete()
-    session.commit()
+
 
 def delete_all_task():
     #删除所有task（测试用功能）
