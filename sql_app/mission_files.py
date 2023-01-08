@@ -267,7 +267,8 @@ class quest_info:
         self.quest_id = quest_id
         self.quest_text = quest_text
         self.quest_option_num = quest_option_num
-        
+        #文字选择题的文字描述
+        self.quest_description = ''        
         self.quest_musicnum = quest_musicnum
         self.option_list:List[str] = []
         self.src_list:List[str] = []
@@ -281,6 +282,7 @@ class quest_list:
         self.task_id = task_id
         self.task_info = ''
         self.task_name = ''
+
         self.reward = 0
     
     def append_quest(self, quest:quest_info) -> None:
@@ -423,11 +425,12 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
         infos = info.split(',')
         quest_id = int(infos[0])
         quest_text = infos[1]
-        option_num = int(infos[2])
+        quest_description = infos[2]
+        option_num = int(infos[3])
         
         quest = quest_info(quest_id, quest_text, option_num)
-
-        for j in range(3, 3 + option_num):
+        quest.src_list.append(quest_description)
+        for j in range(4, 4 + option_num):
             quest.option_list.append(infos[j])
 
 
@@ -457,12 +460,12 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
     lines = f.readlines()
     quest_num = lines[0].strip('\n')
     que_list = quest_list(quest_num, quest_type)
-    for index in range(1, quest_num - 1):
+    for index in range(1, quest_num + 1):
         info = lines[index].strip('\n')
         infos = info.split(',')
         quest_id = int(infos[0])
         quest_text = infos[1]
-        music_num = infos[2]
+        music_num = int(infos[2])
         option_num = int(infos[3])
         
         quest = quest_info(quest_id, quest_text, option_num, music_num)
@@ -565,8 +568,35 @@ def process_select_answer(answer:List[str], username, user_id, task_id) -> None:
     finish_task(task_id)
     return
 
-def process_mark_answer() -> None:
-    pass
+def process_mark_answer(answer:List[str], username, user_id, task_id) -> None:
+    ans_num = len(answer)
+    answer_list = []
+    for index in range(0, ans_num):
+        order = int(index + 1)
+        ordinate = answer[index].split(',')
+        line = order + ':' + ' ' + '(' + ordinate[0] + ordinate[1] +')' + '(' + ordinate[2] + ordinate[3] +')' + '\n'
+        answer_list.append(line)
+    root = get_file_root(user_id, username, 1)
+    filename = 'answer_for_%s.txt' % str(task_id)
+    task_state = 1
+    if os.path.exists(root + '/' + str(task_id) + '/' + filename):
+        print("file already exists")
+        delete_file(filename, root, user_id, task_id, task_state)
+    else:
+        new_file(filename, root, user_id, task_id, task_state)
+    
+    print("创建任务文件成功")
+
+    f = open(root + '/' + str(task_id) + '/' + filename, 'w',encoding="utf-8")
+    print("file open success")
+    print("answer_list",answer_list)
+    f.writelines(answer_list)
+    f.close()
+    print("写入完毕")
+    
+    finish_task(task_id)
+    return       
+    return
 
 
 
