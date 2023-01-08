@@ -54,7 +54,7 @@ def split_path(whole_file_path):
 
 def get_task_filename(user_id, task_id, task_state):
     #根据task id获取用户创建的文件名
-    tsk = session.query(Task_files).filter(Task_files.user_id == user_id, Task_files.task_id == task_id, Task_files.rec_or_create == task_state).one()
+    tsk = session.query(Task_files).filter(Task_files.user_id == user_id, Task_files.task_id == task_id, Task_files.rec_or_create == task_state).one_or_none()
     return tsk.file_name
 
 def new_file(filename, root, user_id, task_id, task_state):
@@ -647,18 +647,19 @@ def delete_task_files(task_id):
     reqs = session.query(Request).filter(Request.task_id == task_id).all()
     for req in reqs:
         user_id = req.user_id
-        user = User.objects.filter(id = user_id)
+        user = User.objects.get(id = user_id)
         root1 = get_file_root(user_id, user.username, 1)
+        print(root1)
         filename = get_task_filename(user_id,task_id, 1)
         delete_file(filename, root1, user_id, task_id, 1)
         
     owner_id = tsk.owner_id
-    owner = User.objects.filter(id = owner_id)
+    owner = User.objects.get(id = owner_id)
     root2 = get_file_root(owner_id, owner.username, 0)
     filename = get_task_filename(owner_id, task_id, 0)
     delete_file(filename, root2, owner_id, task_id, 0)
     session.commit()
-    delete_task_by_id(task_id)
+    
 
     return 0
 
