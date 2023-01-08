@@ -11,8 +11,6 @@ import shutil
 import pygame
 from typing import List, Dict
 from .crud import *
-
-session = SessionLocal()
 #todo: 文件名是否合法
 def create_new_user_filefolder(user_id, username):
     #创建文件夹
