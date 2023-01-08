@@ -624,13 +624,10 @@ def get_receive_list(request, task_id):
         porpath = '/media_url/necoru.jpg'
     else: 
         porpath = '/media_url/'  + por
-    recs = get_all_receive_info(task_id)
+    recs = get_receive_info(task_id)
     task = get_task_by_task_id(task_id)
     profiles =[]
-    for rec in recs:
-        user_id = rec.user_id
-        user = get_profile_by_user_id(user_id)
-        profiles.append(user)
+
     objs = {
         "username": user_info.nickname,
         "tel":user_info.tel,
@@ -643,12 +640,12 @@ def get_receive_list(request, task_id):
     
     return render(request, 'receive_list.html', objs)
 
-def receive_download(request, task_id):
+def receive_download(request, rec_id):
 
-    rec = get_receive_by_id(task_id)
+    rec = get_receive_by_id(rec_id)
     user = User.objects.get(id = rec.user_id)
     #def download_file_path(username, user_id, task_state, task_id):
-    file_path = download_file_path(user.username,user.id,1,task_id)
+    file_path = download_file_path(user.username,user.id,1,rec.task_id)
     # print("file_path",file_path)
     try:
         response = FileResponse(open(file_path, 'rb'))

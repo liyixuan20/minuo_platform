@@ -137,7 +137,7 @@ def ultimate_finish_task(task_id):
 
 def get_all_receive_info(task_id):
     #返回已经结算完的任务事项
-    rec = session.query(Receive).join(Profile, Receive.user_id == Profile.user_id).filter(Receive.task_id == task_id).all()
+    rec = session.query(Receive).filter(Receive.task_id == task_id).all()
     
     return rec
 
@@ -237,8 +237,27 @@ def get_request_task_info(user_id):
         tri = task_request_info(tk.id, tk.name, tk.owner_id, req.create_at, tk.reward, tk.status, req.id)
         tsk.append(tri)
     return tsk
+class receive_info:
+    def __init__(self,nickname,user_id,credits, create_at, rec_id, task_id, status) -> None:
+        self.nickname = nickname
+        self.user_id = user_id
+        self.credits = credits
+        self.create_at = create_at
+        self.rec_id = rec_id
+        self.task_id = task_id
+        self.status = status
 
 def get_receive_by_id(rec_id):
-    rec = session.query(Receive).join(Task_files, Task_files.user_id == Receive.user_id).filter(Receive.id == rec_id).one_or_none()
+    return session.query(Receive).filter(Receive.id == rec_id).one_or_none()
+
+def get_receive_info(task_id):
+    recs =get_all_receive_info(task_id)
+    rrc = []
+    for rec in recs:
+        user_info = get_profile_by_user_id(rec.user_id)
+        tsk = get_task_by_task_id(rec.task_id)
+        rci = receive_info(user_info.nickname, rec.user_id, user_info.credits, rec.create_at, rec.id, rec.task_id, rec.status)
+        rrc.append(rci)
+
     
-    return rec
+    return rrc
