@@ -267,7 +267,8 @@ class quest_info:
         self.quest_id = quest_id
         self.quest_text = quest_text
         self.quest_option_num = quest_option_num
-        
+        #文字选择题的文字描述
+        self.quest_description = ''        
         self.quest_musicnum = quest_musicnum
         self.option_list:List[str] = []
         self.src_list:List[str] = []
@@ -281,6 +282,7 @@ class quest_list:
         self.task_id = task_id
         self.task_info = ''
         self.task_name = ''
+
         self.reward = 0
     
     def append_quest(self, quest:quest_info) -> None:
@@ -423,11 +425,12 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
         infos = info.split(',')
         quest_id = int(infos[0])
         quest_text = infos[1]
-        option_num = int(infos[2])
+        quest_description = infos[2]
+        option_num = int(infos[3])
         
         quest = quest_info(quest_id, quest_text, option_num)
-
-        for j in range(3, 3 + option_num):
+        quest.quest_description = quest_description
+        for j in range(4, 4 + option_num):
             quest.option_list.append(infos[j])
 
 
