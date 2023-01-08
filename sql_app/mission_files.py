@@ -11,6 +11,9 @@ import shutil
 import pygame
 from typing import List, Dict
 from .crud import *
+from .crud import session
+
+
 #todo: 文件名是否合法
 def create_new_user_filefolder(user_id, username):
     #创建文件夹
@@ -636,8 +639,9 @@ def audio_play(path:str, volume=0.5):
     return
 
 def delete_task_info(task_id):
-    tsk = session.query(Task).filter(Task.id == task_id).delete()
-    reqs = session.query(Request).filter(Request.task_id == task_id).delete()
+    session.query(Task).filter(Task.id == task_id).delete()
+    session.query(Request).filter(Request.task_id == task_id).delete()
+
     session.query(Task_files).filter(Task_files.task_id == task_id).delete()
     session.query(Receive).filter(Receive.task_id == task_id).delete()
     session.commit()
@@ -694,9 +698,10 @@ def delete_task_files(task_id):
     return 0
 
 def delete_task_by_id(task_id):
+    d = 1
     
     d = delete_task_files(task_id)
     if d == 0:
         delete_task_info(task_id)
-
+    session.commit()
     return 0

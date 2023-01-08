@@ -596,11 +596,52 @@ def setProfilefunc(request):
     return render(request, 'setProfile.html',objs)
 
 def UploadFileForm(request):
-    
+  
     return
 
+#查看历史已完成的任务
+def get_receive_list(request, task_id):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    user_info= get_profile_by_user_id(user.id)
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+    recs = get_all_receive_info(task_id)
+    task = get_task_by_task_id(task_id)
+    profiles =[]
+    for rec in recs:
+        user_id = rec.user_id
+        user = get_profile_by_user_id(user_id)
+        profiles.append(user)
+    objs = {
+        "username": user_info.nickname,
+        "tel":user_info.tel,
+        "points":user_info.points,
+        "portrait": porpath,
+        "receives":recs,
+        "task":task, 
+        "profiles":profiles      
+    }
+    
+    return render(request, 'receive_list.html', objs)
 
+def receive_download(request, task_id):
 
+    rec = get_receive_by_id(task_id)
+    user = User.objects.get(id = rec.user_id)
+    #def download_file_path(username, user_id, task_state, task_id):
+    file_path = download_file_path(user.username,user.id,1,task_id)
+    # print("file_path",file_path)
+    try:
+        response = FileResponse(open(file_path, 'rb'))
+        response['content_type'] = "application/octet-stream"
+        response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+        return response
+    except Exception:
+        raise Http404
 # ---------------------邮箱验证--------------------------------
 #验证成功的user is_active = 1
 def generate_verify_email_url(user):
