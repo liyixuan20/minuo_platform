@@ -66,7 +66,7 @@ docker部署：`from .models import *, from .database import Base, SessionLocal`
 
 ### 获取用户任务列表
 
-**函数名：get_task_by_id**
+**函数名：get_task_by_task_id**
 
 **接收参数**
 

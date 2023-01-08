@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}HomePage{% endblock %}
 {% block content %}
+<head>
+    <script type="text/javascript" src="/static/jquery-3.6.3.js"></script>
+</head>
+
 <nav class="navbar navbar-expand-lg navbar-light justify-content-between sticky-top" style="background: linear-gradient(to right,thistle,cornsilk,#e3f2fd);">
     <a class="navbar-brand" style="font-family: '幼圆';font-weight: 500;font-size: xx-large;">米诺众包</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,11 +58,14 @@
          </ol>
        <!-- 轮播图片 -->
        <div class="carousel-inner">
-           <div class="carousel-item "data-bs-interval="2000">
-           <img src="/media_url/necoru.jpg" class=" d-block w-100">
+           <div class="carousel-item active"data-bs-interval="2000">
+           <img src="/media_url/主页图1.jpg" style="height: 450px;" class=" d-block w-100">
            </div>
            <div class="carousel-item "data-bs-interval="2000">
-           <img src="/media_url/necoru.jpg" class=" d-block w-100">
+           <img src="/media_url/主页图2.jpg" style="height: 450px;" class=" d-block w-100">
+           </div>
+           <div class="carousel-item "data-bs-interval="2000">
+           <img src="/media_url/主页图3.jpg" style="height: 450px;" class=" d-block w-100">
            </div>
        </div>
        <!-- 左右切换按钮 -->
@@ -76,12 +83,12 @@
     <input >
     </div> -->
     <div id="instruction" style="height:500px;text-align:center;background-color: rgba(243, 245, 250, 1);">
-        <h1 style="padding-top: 200px;">还未拥有账号？</h1>
+        <h1 style="padding-top: 100px;">还未拥有账号？</h1>
         <button style="border-radius: 30px;width:300px;height:50px;margin-top: 80px;"><a href="signup/">注册</a></button>
     </div>
 
     <div id="aboutUs" style="text-align:center;height: 200px;background-color: rgb(55, 64, 94);color: #EEEEEE;">
-        <h1>关于我们</h1>
+        <h1 style="padding-top: 40px;">关于我们</h1>
         <p>软工小组A07 付家华 李一宣 王宇航 郑若琪</p>
     </div>
 </div>

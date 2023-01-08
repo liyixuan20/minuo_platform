@@ -269,6 +269,7 @@ class quest_info:
         self.quest_option_num = quest_option_num
         #文字选择题的文字描述
         self.quest_description = ''        
+
         self.quest_musicnum = quest_musicnum
         self.option_list:List[str] = []
         self.src_list:List[str] = []
@@ -458,7 +459,7 @@ def process_select_audio_file(filename, username, user_id, task_state, task_id, 
         print("打开文件成功")
 
     lines = f.readlines()
-    quest_num = lines[0].strip('\n')
+    quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
     for index in range(1, quest_num + 1):
         info = lines[index].strip('\n')

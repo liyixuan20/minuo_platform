@@ -3,6 +3,10 @@
 {% block content %}
 <head>
     <script type="text/javascript" src="/static/jquery-3.6.3.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="/static/picjqshow_jb51net/css/jquery.Jcrop.css"/>
+    <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery.Jcrop.js"></script>
 </head>
 <script>
     var js_task_id = 0 ;
@@ -14,6 +18,8 @@
     var js_items_answer_y2 = new Array();
     var js_task_type = 0;
     var last_item = 1;
+    var jq_img_select_str="#img-select1";
+    var jcropApi;
     $().ready(function(){
         $(".task-quest").hide();
         $(".hidden").hide()
@@ -26,6 +32,7 @@
         js_task_items_num = $("#js-task-item-num").text();
         js_task_type = $("#js-task-type").text();
         console.log("js_task_type = ",js_task_type)
+
         $(".page-item .page-link").click(function(){
             $(".page-item").attr({
                 "class":"page-item"
@@ -47,7 +54,33 @@
             // console.log(js_items_answer);
             task_quest.show();
             last_item = id_num
+            jq_img_select_str = "#img-select"+String(last_item)
+            console.log("jq_img_select_str=",jq_img_select_str)
+            $(jq_img_select_str).Jcrop({
+                allowSelect: true,
+                baseClass: 'jcrop'
+                }, function() {
+                jcropApi = this;
+            });
         })
+
+        // $(jq_img_select_str).imgAreaSelect({
+        //     // movable:true,
+        //     // resizable:true,
+        //     // show:true,
+        // });
+        $("#img-select1").click(function(){
+            console.log("图片框选1")
+
+        })
+
+        $(jq_img_select_str).Jcrop({
+                allowSelect: true,
+                baseClass: 'jcrop'
+                }, function() {
+                jcropApi = this;
+        });
+
         $(":radio").click(function(){
             jq_radio = $(this);
             radio_str = jq_radio.val().split(",");
@@ -74,6 +107,10 @@
                     console.log("=======================\nTask submit!")
                 }
             })
+        })
+        $("audio").click(function(){
+            // this.pause()
+
         })
     })
 </script>
@@ -148,7 +185,19 @@
     <div class="task-quest" id="{{quest.quest_id}}">
         <div class="task-quest-NO">{{quest.quest_id}}</div>
         <p class = "task-quest-description">{{quest.quest_text}}</p>
+        {% if task_type == 1 %}
         <img class="img-fluid" src="{{quest.copy_path.0}}" style="width: 120px; height:auto;">
+        {% elif task_type == 2 %}
+        <img  id="img-select{{quest.quest_id}}" src="{{quest.copy_path.0}}" style="width: 120px; height:auto;">
+        {% elif task_type == 3 %}
+        <div>{{quest.quest_description}}}</div>
+        {% elif task_type == 4 %}
+            {% for path in quest.copy_path %}
+            <audio src="{{path}}" controls preload="auto"></audio>
+            {% endfor %}
+        {% else %}
+        <div> 任务类型错误 </div>
+        {% endif %}
         <!-- <div class="task-source">{{quest.quest_pics_path_list.0}}</div> -->
         {% for quest_option in quest.option_list %}
         <div class="custom-control custom-radio">
@@ -159,8 +208,7 @@
         {% endfor %}  
     </div>
     {% endfor %}
-    <button type="button" class="btn btn-outline-primary" id="task_finished">完成题目</button>
-    
+    <button type="button" class="btn btn-outline-primary" id="task_finished">完成题目</button>/
 </div>
 
 {% endblock %}

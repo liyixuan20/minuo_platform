@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}Profile{% endblock %}
 {% block content %}
+<head>
+    <script type="text/javascript" src="/static/jquery-3.6.3.js"></script>
+</head>
 <nav class="navbar navbar-expand-lg navbar-light justify-content-between sticky-top" style="background: linear-gradient(to right,thistle,cornsilk,#e3f2fd);">
     <a class="navbar-brand" style="font-family: '幼圆';font-weight: 500;font-size: xx-large;">米诺众包</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,10 +47,10 @@
 </nav>
 <div>
     <h1>{{task.name}}</h1>
-    <p style="width:70%;font-size: large;word-wrap: break-word;display: block;margin: 0 auto;">222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222</p>
+    <p style="width:70%;font-size: large;word-wrap: break-word;display: block;margin: 0 auto;text-align: center;">{{task.task_info}}</p>
     <div style="padding-top:15px;margin-left:3px;margin-right:42px;display: flex;">
         <a href="../file_download/{{ task.id }}/" style="height:50px;width:40%;display: block;margin-right:10%;margin-left: 15%;"><button class="btn btn-outline-primary" >下载任务文件</button></a>
-        <a href="../task_request/{{ task.id }}/" style="height:50px;width:40%;display: block;margin-right:10%;margin-left: 15%;"><button type="button" class="btn btn-outline-success" style="display: block;width:20%;">申请任务</button></a>
+        <a href="../task_request/{{ task.id }}/" style="height:50px;display: block;width: 20%;"><button type="button" class="btn btn-outline-success">申请任务</button></a>
     </div>
     {{ file }}
 </div>
