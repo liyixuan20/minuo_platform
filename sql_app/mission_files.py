@@ -575,7 +575,7 @@ def process_mark_answer(answer:List[str], username, user_id, task_id) -> None:
     for index in range(0, ans_num):
         order = str(index + 1)
         ordinate = answer[index].split(',')
-        line = order + ':' + ' ' + '(' + ordinate[0] + ordinate[1] +')' + '(' + ordinate[2] + ordinate[3] +')' + '\n'
+        line = order + ':' + ' ' + '(' + ordinate[0] +','+ ordinate[1] +')' + '(' + ordinate[2] +','+ ordinate[3] +')' + '\n'
         answer_list.append(line)
     root = get_file_root(user_id, username, 1)
     filename = 'answer_for_%s.txt' % str(task_id)
