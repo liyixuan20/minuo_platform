@@ -159,7 +159,9 @@
         {% elif task_type == 3 %}
         <div>文字选择题</div>
         {% elif task_type == 4 %}
-        <audio src="/media_url/UnderTidesBattle.mp3" controls preload="auto"></audio>
+            {% for path in quest.copy_path %}
+            <audio src="{{path}}" controls preload="auto"></audio>
+            {% endfor %}
         {% else %}
         <div> 任务类型错误 </div>
         {% endif %}
