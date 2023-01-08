@@ -119,7 +119,7 @@ def upload_file(filename, username, user_id, task_state, task_id, file):
     #     print("file write error")
     #     return -3
     
-    return
+    return 0
 
 def download_file_path(username, user_id, task_state, task_id):
     #下载文件
@@ -633,3 +633,29 @@ def audio_play(path:str, volume=0.5):
     pygame.mixer.music.play()
     print("playing audio")
     return
+
+def delete_task_by_id(task_id):
+    tsk = session.query(Task).filter(Task.id == task_id).delete()
+    reqs = session.query(Request).filter(Request.task_id == task_id).delete()
+    
+    session.commit()
+def delete_task_files(task_id):
+    #删除特定task
+    tsk = session.query(Task).filter(Task.id == task_id).one()
+    reqs = session.query(Request).filter(Request.task_id == task_id).all()
+    for req in reqs:
+        user_id = req.user_id
+        user = User.objects.filter(id = user_id)
+        root1 = get_file_root(user_id, user.username, 1)
+        filename = get_task_filename(user_id,task_id, 1)
+        delete_file(filename, root1, user_id, task_id, 1)
+        
+    owner_id = tsk.owner_id
+    owner = User.objects.filter(id = owner_id)
+    root2 = get_file_root(owner_id, owner.username, 0)
+    filename = get_task_filename(owner_id, task_id, 0)
+    delete_file(filename, root2, owner_id, task_id, 0)
+    session.commit()
+    delete_task_by_id(task_id)
+
+    return 0
