@@ -685,7 +685,9 @@ def delete_task_files(task_id):
     return 0
 
 def delete_task_by_id(task_id):
-    delete_task_files(task_id)
-    delete_task_info(task_id)
+    
+    d = delete_task_files(task_id)
+    if d == 0:
+        delete_task_info(task_id)
 
     return 0
