@@ -18,10 +18,17 @@ def listfunc(request):
     # TODO: 列出所有任务，支持按状态筛选，按时间排序
     username = request.user
     user = User.objects.get(username=username)
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
     tasks = get_all_task()
     # print("tasks:",tasks)
     objs = {
         "tasks":tasks,
+        "portrait":porpath,
     }
     return render(request, 'list.html', objs)
 
@@ -168,15 +175,25 @@ def uploadfunc(request):
 
 def detailfunc(request, task_id):
     # TODO: 任务详情
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+
     objs = {
         "file":"filepath",
+        
     }
-    username = request.user
-    user = User.objects.get(username = username)
+
     task = get_task_by_task_id(task_id)
     # def download_file_path(username, user_id, task_state, task_id):
     objs = {
-        "task":task
+        "task":task,
+        "portrait":porpath,
     }       #
     return render(request, 'detail.html', objs)
 
@@ -187,10 +204,19 @@ def detail_request_func(request, pk):
     }
     username = request.user
     user = User.objects.get(username = username)
+
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+
     task = get_task_by_task_id(pk)
             # def download_file_path(username, user_id, task_state, task_id):
     objs = {
-        "task":task
+        "task":task,
+        "portrait":porpath
     }       #
     return render(request, 'detail.html', objs)
 
@@ -244,22 +270,41 @@ def task_request_pass(request,task_id):
     
     username = request.user
     user = User.objects.get(username = username)
+
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+
     task_reqs = get_requests_by_task(task_id)
     objs = {
         "task_requests":task_reqs,
+        "portrait":porpath
     }
     return render(request, 'task_requests.html', objs)
     return redirect('profile')
 
 def front_request_pass(request,req_id):
     allow_request_task(req_id)
+
     return redirect('profile')
 
 def front_task_upload(request,req_id):
     user_name = request.user
     user = User.objects.get(username = user_name)
+
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+
     obj={
-        "req_id":req_id
+        "req_id":req_id,
+        "portrait" : porpath
     }
     if request.POST:
         file = request.FILES.get("taskfile")
@@ -369,6 +414,14 @@ def front_task_operate(request,req_id):
     user = User.objects.get(username = user_name)
     user_id = user.id
     username = user.username
+
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+
     # (username : str, user_id : int, task_id : int) -> quest_list:
     task = process_quest_files(username,user_id,req_id)
     taskname = get_task_by_task_id(req_id).name
@@ -398,6 +451,7 @@ def front_task_operate(request,req_id):
         "task_item_num":task_item_num,
         "task_item_range":task_item_range,
         "quests":quests,
+        "portrait":porpath,
     }
     return render(request, 'task_operate.html', obj)
 
@@ -418,6 +472,14 @@ def front_upload_file(request):
     # print("user_name:",user_name)
     # print("user.username",user.username)
     # user_info= get_profile_by_user_id(user.id)
+
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+
     step = 1
     global  taskname
     global  points
@@ -466,12 +528,23 @@ def front_upload_file(request):
         return redirect('profile')
     objs = {
        "step":step,
+       "portrait":porpath,
     }
     return render(request, 'upload.html', objs)
 
 def task_complete_page(request,task_id):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+
     objs={
-        "task_id":task_id
+        "task_id":task_id,
+        "portrait":porpath
     }
     return render(request, 'task_complete.html', objs)
 
