@@ -640,7 +640,8 @@ def audio_play(path:str, volume=0.5):
 def delete_task_info(task_id):
     tsk = session.query(Task).filter(Task.id == task_id).delete()
     reqs = session.query(Request).filter(Request.task_id == task_id).delete()
-   
+    session.query(Task_files).filter(Task_files.task_id == task_id).delete()
+    session.query(Receive).filter(Receive.task_id == task_id).delete()
     session.commit()
 def delete_dir(roots, task_id):
     
@@ -659,17 +660,27 @@ def delete_task_files(task_id):
     #删除特定task
     tsk = session.query(Task).filter(Task.id == task_id).one()
     reqs = session.query(Request).filter(Request.task_id == task_id).all()
-    for req in reqs:
-        user_id = req.user_id
-        user = User.objects.get(id = user_id)
-        root1 = get_file_root(user_id, user.username, 1)
-        print(root1)
-        print("this is root1\n")
-        #filename = get_task_filename(user_id,task_id, 1)
-        #print("filename" ,filename)
-        #delete_file(filename, root1, user_id, task_id, 1)
-        delete_dir(root1, task_id)
-        
+    recs = session.query(Receive).filter(Receive.task_id == task_id).all()
+    if reqs != None:
+        for req in reqs:
+            user_id = req.user_id
+            user = User.objects.get(id = user_id)
+            root1 = get_file_root(user_id, user.username, 1)
+            print(root1)
+            print("this is root1\n")
+            #filename = get_task_filename(user_id,task_id, 1)
+            #print("filename" ,filename)
+            #delete_file(filename, root1, user_id, task_id, 1)
+            delete_dir(root1, task_id)
+
+    if recs != None:
+        for rec in recs:
+            user_id = rec.user_id
+            user = User.objects.get(id = user_id)
+            root3 = get_file_root(user_id, user.username, 1)
+            delete_dir(root3, task_id)
+
+
     owner_id = tsk.owner_id
     owner = User.objects.get(id = owner_id)
     root2 = get_file_root(owner_id, owner.username, 0)
