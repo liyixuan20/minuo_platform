@@ -67,6 +67,7 @@ def new_file(filename, root, user_id, task_id, task_state):
         return 
     #更新到数据库中
     tsk = Task_files(task_id = task_id, user_id = user_id, file_name = filename, rec_or_create = task_state)
+    print("taskfiles",tsk.file_name)
     session.add(tsk)
     session.commit()
     try:
@@ -555,7 +556,7 @@ def process_select_answer(answer:List[str], username, user_id, task_id) -> None:
     task_state = 1
     if os.path.exists(root + '/' + str(task_id) + '/' + filename):
         print("file already exists")
-        return
+        
     else:
         new_file(filename, root, user_id, task_id, task_state)
     
@@ -584,7 +585,7 @@ def process_mark_answer(answer:List[str], username, user_id, task_id) -> None:
     task_state = 1
     if os.path.exists(root + '/' + str(task_id) + '/' + filename):
         print("file already exists")
-        delete_file(filename, root, user_id, task_id, task_state)
+        
     else:
         new_file(filename, root, user_id, task_id, task_state)
     
@@ -641,6 +642,19 @@ def delete_task_info(task_id):
     reqs = session.query(Request).filter(Request.task_id == task_id).delete()
    
     session.commit()
+def delete_dir(roots, task_id):
+    
+    dir_path = roots + '/' + str(task_id)
+    if not os.path.exists(dir_path):
+        return
+    for root, dirs, files in os.walk(dir_path, topdown=False):
+        for f_name in files:
+            os.remove(os.path.join(root, f_name))
+        for pro_name in dirs:
+            os.rmdir(os.path.join(root, pro_name))
+    os.rmdir(dir_path)
+
+
 def delete_task_files(task_id):
     #删除特定task
     tsk = session.query(Task).filter(Task.id == task_id).one()
@@ -650,21 +664,30 @@ def delete_task_files(task_id):
         user = User.objects.get(id = user_id)
         root1 = get_file_root(user_id, user.username, 1)
         print(root1)
-        filename = get_task_filename(user_id,task_id, 1)
-        delete_file(filename, root1, user_id, task_id, 1)
+        print("this is root1\n")
+        #filename = get_task_filename(user_id,task_id, 1)
+        #print("filename" ,filename)
+        #delete_file(filename, root1, user_id, task_id, 1)
+        delete_dir(root1, task_id)
         
     owner_id = tsk.owner_id
     owner = User.objects.get(id = owner_id)
     root2 = get_file_root(owner_id, owner.username, 0)
-    filename = get_task_filename(owner_id, task_id, 0)
-    delete_file(filename, root2, owner_id, task_id, 0)
+    print("root2", root2)
+    print("taskid", task_id)
+    #filename = get_task_filename(owner_id, task_id, 0)
+    #print("filename",filename)
+    #delete_file(filename, root2, owner_id, task_id, 0)
+    delete_dir(root2, task_id)
     session.commit()
     
 
     return 0
 
 def delete_task_by_id(task_id):
-    delete_task_files(task_id)
-    delete_task_info(task_id)
+    
+    d = delete_task_files(task_id)
+    if d == 0:
+        delete_task_info(task_id)
 
     return 0
