@@ -40,6 +40,19 @@
         js_task_type = $("#js-task-type").text();
         console.log("js_task_type = ",js_task_type)
 
+        if(js_task_type == 3){
+            for(i=0;i< js_task_items_num;i++){
+                text_name = "textarea[name=text+"+String(i+1)+"]"
+                text_filepath = $(text_name).attr("path")
+                var reader = new FileReader();
+                reader.readAsText(text_filepath, "UTF-8");
+                reader.onload = function (e) {
+                    const text_val = e.target.result;
+                    $(text_name).val(text_val)
+                }
+            }
+        }
+
         $(".page-item .page-link").click(function(){
             $(".page-item").attr({
                 "class":"page-item"
@@ -243,7 +256,9 @@
         {% elif task_type == 2 %}
         <img  id="img-select{{quest.quest_id}}" src="{{quest.copy_path.0}}" style="width: 120px; height:auto;">
         {% elif task_type == 3 %}
-        <div>{{quest.quest_description}}}</div>
+            {% for path in quest.copy_path %}
+                <textarea class="jq-text-quest-content" path="{{path}}" cols="30" name="text+{{quest.quest_id}}" readonly></textarea>
+            {% endfor %}   
         {% elif task_type == 4 %}
             {% for path in quest.copy_path %}
             <audio src="{{path}}" controls preload="auto"></audio>

@@ -61,7 +61,8 @@ def profilefunc(request):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else:
+        porpath = '/media_url/'  + por
     
         
     objs = {
@@ -573,7 +574,8 @@ def setProfilefunc(request):
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
-    porpath = '/media_url/'  + por
+    else:
+        porpath = '/media_url/'  + por
 
     objs = {
         "username": user_info.nickname,
