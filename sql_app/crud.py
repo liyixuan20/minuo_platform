@@ -57,8 +57,11 @@ def request_task(user_id, task_id):
     # 创建request
     req = Request(user_id=user_id, task_id=task_id)
     session.add(req)
-    tsk = session.query(Task).filter(Task.id == task_id)
-    tsk.update({Task.status:1})
+    tsk = session.query(Task).filter(Task.id == task_id).one_or_none()
+    if tsk.status >= 2:
+        return -1 
+    elif tsk.status == 0:
+        tsk.status = 1
     session.commit()
 
     return req.id
@@ -70,8 +73,8 @@ def allow_request_task(request_id):
     tsk = session.query(Task).filter(Task.id==task_id)
     tsk.update({Task.status: 2})
     # 删除其他request
-    reqs = session.query(Request).filter(Request.task_id==task_id, Request.user_id != user_id)
-    reqs.delete()
+    #reqs = session.query(Request).filter(Request.task_id==task_id, Request.user_id != user_id)
+    #reqs.delete()
     # 创建receive
     rec = Receive(user_id=user_id, task_id=task_id)
     session.add(rec)
@@ -88,8 +91,13 @@ def finish_task(task_id):
 
 def accept_task(task_id):
     # 标记task为accepted
-    tsk = session.query(Task).filter(Task.id==task_id)
-    tsk.update({Task.status: 4})
+    tsk = session.query(Task).filter(Task.id==task_id).one_or_none()
+    tsk.status = 0
+    reqs = session.query(Request).filter(Request.task_id == task_id).all()
+    if reqs != None:
+        tsk.status = 1
+    
+    
     # 标记receive为accepted
     rec = session.query(Receive).filter(Receive.task_id==task_id, Receive.task_id==1)
     rec.update({Receive.status: 2})
@@ -98,10 +106,27 @@ def accept_task(task_id):
     q = session.query(Profile.user_id)
 
     receiver_id = q.join(Receive, Profile.user_id==Receive.user_id).filter(Receive.task_id==task_id).scalar()
-
+    req = session.query(Request).filter(Request.task_id == task_id, Request.user_id == receiver.id)
+    req.delete()
+    
     receiver = session.query(Profile).filter(Profile.user_id==receiver_id)
     receiver.update({Profile.points: Profile.points + reward})
+    receiver.update({Profile.credits: Profile.credits + 10})
     session.commit()
+
+def ultimate_finish_task(task_id):
+    #结束任务，不再接收申请
+    tsk = session.query(Task).filter(Task.id==task_id).one_or_none()
+    tsk.status = 4   
+    reqs = session.query(Request).filter(Request.task_id==task_id)
+    reqs.delete()
+    session.commit()
+
+def get_all_receive_info(task_id):
+    #返回已经结算完的任务事项
+    rec = session.query(Receive).join(Profile, Receive.user_id == Profile.user_id).filter(Receive.task_id == task_id, Receive.status == 2).all()
+
+    return rec
 
 def reject_task(task_id):
     # 重设task为created
@@ -160,9 +185,11 @@ def delete_request(task_id, user_id):
     q = session.query(Request).filter(Request.task_id == task_id).all()
     if q == []:
         # tk = session.query(Task).filter(Task.id == task_id).one()
-        tsk = session.query(Task).filter(Task.id == task_id)
+        tsk = session.query(Task).filter(Task.id == task_id).one_or_none()
         # if tk.statue == 1:
-        tsk.update({Task.status: 0})
+        if tsk.status == 1:
+            tsk.status = 0
+
     session.commit()
 
 def delete_task_by_id(task_id):

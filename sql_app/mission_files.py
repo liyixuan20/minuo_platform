@@ -269,6 +269,7 @@ class quest_info:
         self.quest_option_num = quest_option_num
         #文字选择题的文字描述
         self.quest_description = ''        
+
         self.quest_musicnum = quest_musicnum
         self.option_list:List[str] = []
         self.src_list:List[str] = []
@@ -429,7 +430,7 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
         option_num = int(infos[3])
         
         quest = quest_info(quest_id, quest_text, option_num)
-        quest.quest_description = quest_description
+        quest.src_list.append(quest_description)
         for j in range(4, 4 + option_num):
             quest.option_list.append(infos[j])
 
@@ -568,8 +569,35 @@ def process_select_answer(answer:List[str], username, user_id, task_id) -> None:
     finish_task(task_id)
     return
 
-def process_mark_answer() -> None:
-    pass
+def process_mark_answer(answer:List[str], username, user_id, task_id) -> None:
+    ans_num = len(answer)
+    answer_list = []
+    for index in range(0, ans_num):
+        order = int(index + 1)
+        ordinate = answer[index].split(',')
+        line = order + ':' + ' ' + '(' + ordinate[0] + ordinate[1] +')' + '(' + ordinate[2] + ordinate[3] +')' + '\n'
+        answer_list.append(line)
+    root = get_file_root(user_id, username, 1)
+    filename = 'answer_for_%s.txt' % str(task_id)
+    task_state = 1
+    if os.path.exists(root + '/' + str(task_id) + '/' + filename):
+        print("file already exists")
+        delete_file(filename, root, user_id, task_id, task_state)
+    else:
+        new_file(filename, root, user_id, task_id, task_state)
+    
+    print("创建任务文件成功")
+
+    f = open(root + '/' + str(task_id) + '/' + filename, 'w',encoding="utf-8")
+    print("file open success")
+    print("answer_list",answer_list)
+    f.writelines(answer_list)
+    f.close()
+    print("写入完毕")
+    
+    finish_task(task_id)
+    return       
+    return
 
 
 
@@ -582,7 +610,8 @@ def process_answer(answer, username, user_id, task_id):
         print("task_type =",task_type)
         process_select_answer(answer, username, user_id, task_id)
     elif task_type == 2:
-        process_mark_answer()
+        print("process mark answer")
+        process_mark_answer(answer,username, user_id, task_id)
 
 
 
