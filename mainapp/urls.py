@@ -28,6 +28,7 @@ urlpatterns = [
     path('task_complete_finish/<task_id>/', front_task_complete, name='front_task_complete'),
     path('task_cancel/<task_id>/', front_task_cancel, name='front_task_cancel'),
     path('task_cancel_request/<req_id>/', task_cancel_request, name='task_cancel_request'),
+    
     re_path(r'^list_ajax/$',list_ajax,name = 'list_ajax'),
     path("task_operate_complete/",task_operate_complete,name="task_operate_complete"),
     path('upload_portrait/', portrait_upload, name = 'upload_portrait'),

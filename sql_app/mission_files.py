@@ -610,7 +610,8 @@ def process_answer(answer, username, user_id, task_id):
         print("task_type =",task_type)
         process_select_answer(answer, username, user_id, task_id)
     elif task_type == 2:
-        process_mark_answer()
+        print("process mark answer")
+        process_mark_answer(answer,username, user_id, task_id)
 
 
 
