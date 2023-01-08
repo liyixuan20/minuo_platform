@@ -38,6 +38,7 @@
 | ---------------- | --------- | ---------------------------------- |
 | quest_id         | int       | 第几个题目                         |
 | quest_text       | str       | 题目描述                           |
+| quest_description| str       | 文本类题目文本
 | quest_option_num | int       | 几个选项                           |
 | quest_musicnum   | str       | 音频文件数量                       |
 | option_list      | List[str] | 选项内容                           |
