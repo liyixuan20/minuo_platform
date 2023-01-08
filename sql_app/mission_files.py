@@ -247,7 +247,7 @@ def remove_other_portrait(user_id):
     filename = q.file_name
     names = os.listdir('./media/')
     for name in names:
-        if name != filename and name != 'necoru.jpg':
+        if name != filename and name != 'necoru.jpg' and name != 'hm2.jpg' and name != 'hm3.jpg':
             os.remove('./media/' + name)
     return
 
