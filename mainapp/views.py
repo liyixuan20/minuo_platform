@@ -72,7 +72,15 @@ def profilefunc(request):
 def portrait_upload(request):
     user_name = request.user
     user = User.objects.get(username = user_name)
-
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+    objs = {
+        "portrait" : porpath
+    }
     if request.method == 'POST':
         
         file = request.FILES.get("portraitfile")
@@ -83,13 +91,26 @@ def portrait_upload(request):
         upload_portrait(user.id, filename, file)
         update_portrait_files(user.id,filename)
         return redirect('profile')
-    return render(request, 'upload_portrait.html')
+    return render(request, 'upload_portrait.html', objs)
         
 
 
 
 def hwfunc(request):
-    return render(request, 'hw.html', {})
+    por = ''
+    if (request.user):
+        username = request.user
+        user = User.objects.get(username = username)
+        por = query_portrait(user.id)
+        update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+    objs = {
+        "portrait" : porpath
+    }
+    return render(request, 'hw.html', objs)
 
 
 def signupfunc(request):
@@ -472,11 +493,23 @@ def setProfilefunc(request):
     user_name = request.user
     user = User.objects.get(username = user_name)
     user_info= get_profile_by_user_id(user.id)
+
+
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    porpath = '/media_url/'  + por
+
     objs = {
         "username": user_info.nickname,
         "tel":user_info.tel,
         "points":user_info.points,
+        "portrait": porpath,
     }
+
+    
     # print(user.id)
     if request.POST:
         username = request.POST['username']
