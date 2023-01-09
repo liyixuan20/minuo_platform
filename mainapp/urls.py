@@ -10,6 +10,7 @@ urlpatterns = [
     path('login/', loginfunc, name='login'),
     path('logout/', logoutfunc, name='logout'),
     path('setProfile/', setProfilefunc, name='logout'),
+    path('change_password/', change_password, name = 'change_password'),
     path('', hwfunc, name='index'),
     path('profile/', profilefunc, name='profile'),
     path('upload/', front_upload_file, name='upload'),
