@@ -40,22 +40,6 @@
         js_task_type = $("#js-task-type").text();
         console.log("js_task_type = ",js_task_type)
 
-        // if(js_task_type == 3){
-        //     for(i=0;i< js_task_items_num;i++){
-        //         text_name = ".jq-text-quest-content.text-"+String(i+1)
-        //         console.log(text_name)
-        //         console.log($(text_name))
-        //         text_filepath = $(text_name).attr("path")
-        //         // text_filepath = "/media"+text_filepath.substr(10,)
-        //         // text_filepath = "http://127.0.0.1:8000"+text_filepath
-        //         console.log(text_filepath)
-        //         // var file_blob = new Blob(text_filepath)
-        //         var reader = new FileReader();
-        //         var text_val = reader.readAsText("/media/mail1.txt", "utf-8");
-        //         $(text_name).val(text_val)
-        //         }
-        // }
-
         $(".page-item .page-link").click(function(){
             $(".page-item").attr({
                 "class":"page-item"
@@ -229,9 +213,10 @@
     <a class="hidden" id="js-task-item-num">{{task_item_num}}</a>
     <a class="hidden" id="js-task-type">{{task_type}}</a>
     <h1>{{taskname}}</h1>
-    <p>{{task_description}}</p>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
+    <p style="width:70%;font-size: x-large;word-wrap: break-word;display: block;margin: 0 auto;text-align: center;">{{task_description}}</p>
+    <nav aria-label="Page navigation example" style="display:inline-flex;flex-direction: row;width: 100%;margin-top: 30px;">
+        <div style="width: 33.33%;"></div>
+        <ul class="pagination" style="width: 33.33%;display: flex;justify-content: center;">
           <!-- <li class="page-item">
             <a class="page-link" href="#" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
@@ -252,33 +237,51 @@
     
     {% for quest in quests %}
     <div class="task-quest" id="{{quest.quest_id}}">
-        <div class="task-quest-NO">{{quest.quest_id}}</div>
-        <p class = "task-quest-description">{{quest.quest_text}}</p>
+        <div class="task-quest-NO" style="text-align: center;font-size: x-large">{{quest.quest_id}}</div>
+        <p class = "task-quest-description" style="text-align: center;font-size: x-large">{{quest.quest_text}}</p>
         {% if task_type == 1 %}
-        <img class="img-fluid" src="{{quest.copy_path.0}}" style="width: 120px; height:auto;">
+        <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
+            <div style="width: 33.33%;"></div>
+            <img class="img-fluid" src="{{quest.copy_path.0}}" style="width: 33.33%; height:auto;">
+        </div>
         {% elif task_type == 2 %}
-        <img  id="img-select{{quest.quest_id}}" src="{{quest.copy_path.0}}" style="width: 120px; height:auto;">
+        <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
+            <div style="width: 33.33%;"></div>
+            <img  id="img-select{{quest.quest_id}}" src="{{quest.copy_path.0}}" style="width: 33.33%; height:auto;">
+        </div>
         {% elif task_type == 3 %}
+            <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
+                <div style="width: 33.33%;"></div>
                 <!-- <textarea class="jq-text-quest-content text-{{quest.quest_id}}" path="{{path}}" cols="30"  readonly></textarea> -->
-                <textarea class="jq-text-quest-content"  rows="10" cols="20"  readonly>{{quest.copy_path.0}}</textarea>
+                <textarea class="form-control"  rows="10" cols="20"  readonly>{{quest.copy_path.0}}</textarea>
+            </div>
         {% elif task_type == 4 %}
             {% for path in quest.copy_path %}
-            <audio src="{{path}}" controls preload="auto"></audio>
+            <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
+            <div style="width: 33.33%;"></div>
+                <audio src="{{path}}" controls preload="auto"></audio>
+            </div>
             {% endfor %}
         {% else %}
         <div> 任务类型错误 </div>
         {% endif %}
         <!-- <div class="task-source">{{quest.quest_pics_path_list.0}}</div> -->
         {% for quest_option in quest.option_list %}
-        <div class="custom-control custom-radio">
+        <div class="custom-control custom-radio" style="text-align: center;font-size: x-large;margin-top: 5px;">
+
             <input type="radio" id="{{quest.quest_id}}+{{quest_option}}" name="{{quest.quest_id}}" class="custom-control-input" value="{{quest.quest_id}},{{quest_option}}">
+
             <label class="custom-control-label" for="{{quest.quest_id}}+{{quest_option}}">{{quest_option}}</label>
         </div>
         <!-- <div><input type="radio" class="task-item" id="0" name = "quest_option" value = "{{quest_option}}">{{quest_option}}</input></div> -->
         {% endfor %}  
     </div>
     {% endfor %}
-    <button type="button" class="btn btn-outline-primary" id="task_finished">完成题目</button>
+    <div style="width: 100%;display:inline-flex;flex-direction: row;margin-top: 35px;margin-bottom: 20px;">
+        <div style="width: 45%;"></div>
+        <button type="button" class="btn btn-outline-primary" id="task_finished" style="width: 10%;font-size: large;">完成题目</button>
+    </div>
+    
 </div>
 
 {% endblock %}

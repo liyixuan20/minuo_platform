@@ -14,13 +14,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="..">主页</a>
+                <a class="nav-link" href="../..">主页</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../list/">任务中心</a>
+                <a class="nav-link" href="../../list/">任务中心</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../upload/">创建任务</a>
+                <a class="nav-link" href="../../upload/">创建任务</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">帮助</a>
@@ -38,7 +38,7 @@
                 justify-content: center;
                 overflow: hidden;"></li>
             <li class="nav-item">
-                <a class="nav-link" href="#">{{ user.username }}</a>
+                <a class="nav-link" href="../../profile/">{{ user.username }}</a>
             </li>  
             <li class="nav-item">
                 <a class="nav-link" href="../signup/">注册</a>
@@ -85,23 +85,7 @@
             <div  style="height:100%;">
 
                 <div>
-                    <h3>详细信息</h3>
-                    <table id="verified_info">
-                        <tr>
-                            
-                            <th>profile_id</th>
-                            <th>username</th>
-                            <th>points</th>
-                        </tr>
-                        <tr>
-                            
-                            <td>{{ profile.id }}</td>
-                            <td>{{ user.username }}</td>
-                            <td>{{ profile.points }}</td>
-                        </tr>
-                    </table>
-            
-                    <h3>历史提交任务</h3>
+                    <h3 style="margin-top:35px">历史提交任务</h3>
                     <table id="missions_released">
                         <tr>
                             <th>用户昵称</th>
@@ -118,13 +102,17 @@
                                 <span class="badge badge-primary">尚未结算</span>
                                 {% elif t.status == 2%}
                                 <span class="badge badge-primary">已结算</span>
+                                {% else %}
+                                <span class="badge badge-primary">未上传答案</span>
                                 {% endif %}
                             </td>
                             <td>{{ t.create_at }}</td>
                             <td>
-                                <a href="../receive_download/{{t.rec_id}}/"><button type="button" class="btn btn-outline-danger">下载作答文件</button></a>
+                                {% if t.status ==  1 or t.status == 2 %}
+                                <a href="../../receive_download/{{t.rec_id}}/"><button type="button" class="btn btn-outline-danger">下载作答文件</button></a>
+                                {% endif %}
                                 {% if t.status == 1 %}
-                                <a href="../task_complete_page/{{ t.task_id }}/"><button type="button" class="btn btn-outline-danger">前往结算</button></a>
+                                <a href="../../task_complete_finish/{{ t.task_id }}/"><button type="button" class="btn btn-outline-danger">结算任务</button></a>
                                 {% endif %}
                             <td>
                         </tr>

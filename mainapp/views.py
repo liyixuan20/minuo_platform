@@ -178,9 +178,11 @@ def uploadfunc(request):
 
 
 def detailfunc(request, task_id):
-    # TODO: 任务详情
     user_name = request.user
     user = User.objects.get(username = user_name)
+    user_id = user.id
+    username = user.username
+
     por = query_portrait(user.id)
     update_portrait_files(user.id, por)
     
@@ -189,18 +191,47 @@ def detailfunc(request, task_id):
     else: 
         porpath = '/media_url/'  + por
 
-    objs = {
+    task = process_quest_files(username,user_id,task_id)
+    taskname = get_task_by_task_id(task_id).name
+    # task = get_task_by_task_id(req_id)
+    task_description = task.task_info
+    task_item_num = task.quest_num
+    task_item_range = []
+    quests = []
+    print(task.quest_type)
+    # print(task.quest_lists)
+    for i in range(task_item_num):
+        task_item_range.append(i+1)
+        quests.append(task.get_Quest_by_questID(i+1))
+    # print(quests[0].copy_path)
+    # print(quests)
+    # for quest in quests:
+    #     for i in range(quest.quest_option_num):
+    #         if i == 0:
+    #             quest.quest_option_nums = [0]
+    #         else:
+    #             quest.quest_option_nums.append(i)
+    # if task.quest_type == 3:
+    #     for quest in quests:
+    #         text_path = quest.copy_path[0]
+    #         text_path = "./media"+text_path[10:]
+    #         print(text_path)
+    #         with open(text_path,"r",encoding="utf-8") as f:
+    #             text_content = f.read()
+    #             # print(text_content)
+    #             quest.copy_path[0]=text_content
+    obj={
         "file":"filepath",
-        
-    }
-
-    task = get_task_by_task_id(task_id)
-    # def download_file_path(username, user_id, task_state, task_id):
-    objs = {
-        "task":task,
+        "task_id":task_id,
+        "taskname":taskname,
+        "task_type":task.quest_type,
+        "task_description":task_description,
+        "task_item_num":task_item_num,
+        "task_item_range":task_item_range,
+        "quests":quests,
         "portrait":porpath,
-    }       #
-    return render(request, 'detail.html', objs)
+    }
+    return render(request, 'detail.html', obj)
 
 def detail_request_func(request, pk):
     # TODO: 任务详情
@@ -650,9 +681,9 @@ def get_receive_list(request, task_id):
     
     return render(request, 'receive_list.html', objs)
 
-def receive_download(request, rec_id):
+def receive_download(request, task_id):
 
-    rec = get_receive_by_id(rec_id)
+    rec = get_receive_by_id(task_id)
     user = User.objects.get(id = rec.user_id)
     #def download_file_path(username, user_id, task_state, task_id):
     file_path = download_file_path(user.username,user.id,1,rec.task_id)

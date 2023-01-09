@@ -85,7 +85,7 @@
             <div  style="height:100%;">
 
                 <div>
-                    <h3>详细信息</h3>
+                    <!-- <h3>详细信息</h3>
                     <table id="verified_info">
                         <tr>
                             
@@ -99,9 +99,9 @@
                             <td>{{ user.username }}</td>
                             <td>{{ profile.points }}</td>
                         </tr>
-                    </table>
+                    </table> -->
             
-                    <h3>我发布的</h3>
+                    <h3 style="margin-top:40px">我发布的</h3>
                     <table id="missions_released">
                         <tr>
                             <th>任务id</th>
@@ -133,10 +133,8 @@
                                 <a href="../task_cancel/{{t.id}}/"><button type="button" class="btn btn-outline-danger">取消任务</button></a>
                                 {% if t.status == 1 %}
                                 <a href="../task_request_pass/{{t.id}}/"><button type="button" class="btn btn-outline-danger">审核申请</button></a>
-                                {% elif t.status == 3 %}
-                                <a href="../task_complete_page/{{t.id}}/"><button type="button" class="btn btn-outline-danger">前往结算</button></a>
                                 {% endif %}
-                                <a href="../receive_list/{{t.id}}/"><button type="button" class="btn btn-outline-danger">查看历史提交作答</button></a>
+                                <a href="../receive_list/{{t.id}}/"><button type="button" class="btn btn-outline-danger">作答情况</button></a>
                             <td>
                         </tr>
                         {% endfor %}
@@ -157,7 +155,7 @@
                             <td><a href="{% url 'detail_request' req.id%}">{{ req.name }}</a></td>
                             <td>{{ req.reward }}</td>
                             <td> 
-                                {% if req.status ==  0%}
+                                {% if req.status ==  0 %}
                                 <span class="badge badge-primary">尚无申请</span>
                                 {% elif req.status == 1 %}
                                 <span class="badge badge-primary">申请审核中</span>
@@ -172,8 +170,9 @@
                             <td>{{req.owner_id}}</td>
                             <td>{{req.create_at }}</td>
                             <td> 
-                                {if req.status == 0 and req.status == 1 and req.status == 2 and req.status == 3}
+                                {% if req.status == 1 or req.status == 2 or req.status == 3 %}
                                 <a href="../task_cancel_request/{{req.id}}/"><button type="button" class="btn btn-outline-danger">取消任务</button></a>
+                                {% endif %}
                                 {% if req.status == 2 %}
                                 <a href="../task_operate/{{req.id}}/"><button type="button" class="btn btn-outline-danger">执行任务</button></a>
                                 <a href="../task_upload/{{req.id}}/"><button type="button" class="btn btn-outline-danger">提交任务</button></a>

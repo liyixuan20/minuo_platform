@@ -98,7 +98,7 @@ def accept_task(task_id):
     tsk = session.query(Task).filter(Task.id==task_id).one_or_none()
     
     # 标记receive为accepted
-    rec = session.query(Receive).filter(Receive.task_id==task_id, Receive.status == 1)
+    rec = session.query(Receive).filter(Receive.task_id==task_id, Receive.status==1)
     rec.update({Receive.status: 2})
     # 为receiver发放reward
     reward = session.query(Task.reward).filter(Task.id==task_id).scalar()
@@ -122,6 +122,7 @@ def update_task(task_id):
     reqs = session.query(Request).filter(Request.task_id == task_id).all()
     if tsk.status == 0:
         if reqs != None and reqs != []:
+            print("reqs!=None,reqs=",reqs)
             tsk.status = 1
     session.commit()
     return 0
