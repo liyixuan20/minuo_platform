@@ -425,16 +425,16 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
     lines = f.readlines()
     quest_num = int(lines[0].strip('\n'))
     que_list = quest_list(quest_num, quest_type)
-    for index in range(1, quest_num - 1):
+    for index in range(1, quest_num  + 1):
         info = lines[index].strip('\n')
         infos = info.split(',')
         quest_id = int(infos[0])
         quest_text = infos[1]
         quest_description = infos[2]
         option_num = int(infos[3])
-        
+        txt_path = path + '/src/' + quest_description
         quest = quest_info(quest_id, quest_text, option_num)
-        quest.src_list.append(quest_description)
+        quest.src_list.append(txt_path)
         for j in range(4, 4 + option_num):
             quest.option_list.append(infos[j])
 
