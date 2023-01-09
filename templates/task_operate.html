@@ -260,7 +260,7 @@
         <img  id="img-select{{quest.quest_id}}" src="{{quest.copy_path.0}}" style="width: 120px; height:auto;">
         {% elif task_type == 3 %}
                 <!-- <textarea class="jq-text-quest-content text-{{quest.quest_id}}" path="{{path}}" cols="30"  readonly></textarea> -->
-                <textarea class="jq-text-quest-content"  rows="10" cols="20"  readonly>{{quest.copy_path.0}}</textarea>
+                <textarea class="form-control"  rows="10" cols="20"  readonly>{{quest.copy_path.0}}</textarea>
         {% elif task_type == 4 %}
             {% for path in quest.copy_path %}
             <audio src="{{path}}" controls preload="auto"></audio>
