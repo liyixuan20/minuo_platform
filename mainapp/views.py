@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
-
+from django.contrib.auth.hashers import check_password, make_password
 from sql_app.crud import *
 
 from sql_app.mission_files import *
@@ -110,6 +110,7 @@ def hwfunc(request):
     por = ''
     if (request.user):
         username = request.user
+        print(username)
         user = User.objects.get(username = username)
         por = query_portrait(user.id)
         update_portrait_files(user.id, por)
@@ -666,6 +667,46 @@ def setProfilefunc(request):
 
         return redirect('profile')
     return render(request, 'setProfile.html',objs)
+
+def change_password(request):
+    user_name = request.user
+    user = User.objects.get(username = user_name)
+    user_info= get_profile_by_user_id(user.id)
+
+
+    por = query_portrait(user.id)
+    update_portrait_files(user.id, por)
+    
+    if por == '':
+        porpath = '/media_url/necoru.jpg'
+    else: 
+        porpath = '/media_url/'  + por
+    signal = 1
+
+    mat_string = r'(\w){8}(\w)*'
+    if request.POST:
+        old_password = request.POST['old_password']
+        new_password = request.POST['new_password']
+        result = re.match(mat_string, new_password)
+        if result != None:
+            auth = authenticate(username = user_name,password = old_password)
+            if auth is not None:
+                user.set_password(new_password)
+                user.save()
+                return redirect('login')
+            else:
+                signal = 0
+        else:
+            signal = 2
+    objs = {
+        "username": user_info.nickname,
+        "tel":user_info.tel,
+        "points":user_info.points,
+        "portrait": porpath,
+        "signal":signal
+        
+    }            
+    return render(request, 'change_password.html', objs)
 
 def UploadFileForm(request):
   
