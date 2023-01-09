@@ -640,7 +640,7 @@ def audio_play(path:str, volume=0.5):
     pygame.mixer.music.play()
     print("playing audio")
     return
-
+#----------------------------------------删除任务所有信息---------------------------
 def delete_task_info(task_id):
     session.query(Task).filter(Task.id == task_id).delete()
     session.query(Request).filter(Request.task_id == task_id).delete()
