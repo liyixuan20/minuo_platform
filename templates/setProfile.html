@@ -64,7 +64,7 @@
                     <div class="card-body">
                         <ul class="mr-auto list-group">
                             <li class="list-group-item" >用户名：{{ username }}</li>
-                            <li class="list-group-item" >邮箱：{{ email }} </li>
+                            <li class="list-group-item" >邮箱：{{ user.email }} </li>
                             <li class="list-group-item" >电话：{{ tel }} </li>
                             <li class="list-group-item" >积分：{{ points }} </li>
                         </ul>
@@ -90,6 +90,10 @@
                         <div class="form-group">
                             <label for="exampleFormControlInput1">Tel</label>
                             <input type="text" class="form-control" id="Telphone" name="Telphone">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlInput1">email</label>
+                            <input type="text" class="form-control" id="Telphone" name="email">
                         </div>
                         <div class="form-group" style="padding-top:15px;margin-left:3px;margin-right:42px;">
                             <button class="btn btn-primary btn-block"type="submit" value="submit" style="border-radius: 30px;height:50px;display: block;margin-right:30px;">确认修改</button>
