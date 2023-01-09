@@ -433,7 +433,7 @@ def process_text_select_files(filename, username, user_id, task_state, task_id, 
         quest_text = infos[1]
         quest_description = infos[2]
         option_num = int(infos[3])
-        
+        txt_path = path + '/src/' + quest_description
         quest = quest_info(quest_id, quest_text, option_num)
         # 修改src_list元素
         src_path = path+"/src/"+quest_description
@@ -640,7 +640,7 @@ def audio_play(path:str, volume=0.5):
     pygame.mixer.music.play()
     print("playing audio")
     return
-
+#----------------------------------------删除任务所有信息---------------------------
 def delete_task_info(task_id):
     session.query(Task).filter(Task.id == task_id).delete()
     session.query(Request).filter(Request.task_id == task_id).delete()

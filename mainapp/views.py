@@ -285,7 +285,7 @@ def task_request_pass(request,task_id):
     else: 
         porpath = '/media_url/'  + por
 
-    task_reqs = get_requests_by_task(task_id)
+    task_reqs = get_request_info(task_id)
     objs = {
         "task_requests":task_reqs,
         "portrait":porpath
@@ -577,6 +577,7 @@ def task_cancel_request(request,req_id):
     user_name = request.user
     user = User.objects.get(username = user_name)
     delete_request(req_id,user.id)
+    update_request(req_id)
     return redirect('profile')
 
 def front_task_complete(request,task_id):
