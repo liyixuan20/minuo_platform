@@ -49,14 +49,18 @@
 <div>
     <table>
         <tr>
-            <th>taskid</th>
-            <th>userid</th>
+            <th>任务id</th>
+            <th>申请人id</th>
+            <th>申请人昵称</th>
+            <th>申请人信誉值</th>
             <th>operation</th>
         </tr>
         {% for req in task_requests %}
         <tr>
-            <td>{{ req.user_id }}</td>
             <td>{{ req.task_id }}</td>
+            <td>{{ req.user_id }}</td>
+            <td>{{ req.nickname }}</td>
+            <td>{{ req.credits }}</td>
             <td> <a href="../../request_pass/{{req.id}}/"><button type="button" class="btn btn-outline-success" >通过请求</button></a></td>
         </tr>
         {% endfor %}

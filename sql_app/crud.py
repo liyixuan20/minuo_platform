@@ -35,7 +35,7 @@ def create_profile(user_id):
     pro = session.query(Profile).filter(Profile.user_id == user_id).one_or_none()
     if pro != None:
         return -2
-    pf = Profile(user_id=user_id)
+    pf = Profile(user_id=user_id, credits = 0)
     session.add(pf)
     session.commit()
     return 0
@@ -195,6 +195,10 @@ def get_taskid_by_name(owner_id, name):
 def delete_request(task_id, user_id):
     #删除任务申请
     session.query(Request).filter(Request.task_id == task_id, Request.user_id == user_id).delete()
+
+    session.commit()
+    return 0
+def update_request(task_id):
     q = session.query(Request).filter(Request.task_id == task_id).all()
     if q == []:
         # tk = session.query(Task).filter(Task.id == task_id).one()
@@ -204,10 +208,8 @@ def delete_request(task_id, user_id):
         # if tk.statue == 1:
         if tsk.status == 1:
             tsk.status = 0
-
     session.commit()
     return 0
-
 
 
 def delete_all_task():
@@ -261,3 +263,22 @@ def get_receive_info(task_id):
 
     
     return rrc
+
+class request_info:
+    def __init__(self, req_id, user_id, task_id, nickname, credits) -> None:
+        self.id = req_id
+        self.user_id = user_id
+        self.task_id = task_id
+        self.nickname = nickname
+        self.credits = credits
+
+
+def get_request_info(task_id):
+    reqs = get_requests_by_task(task_id)
+    infos = []
+    for req in reqs:
+        user_info = get_profile_by_user_id(req.user_id)
+        reinfo = request_info(req.id, req.user_id, req.task_id, user_info.nickname, user_info.credits)
+        infos.append(reinfo)
+        
+    return infos
