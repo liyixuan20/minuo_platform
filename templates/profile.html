@@ -185,6 +185,26 @@
                         </tr>
                         {% endfor %}
                     </table>
+                    <h3>已结算的</h3>
+                    <table id="over_request">
+                        <tr>
+                            <th>任务id</th>
+                            <th>任务名称</th>
+                            <th>任务报酬PT</th>
+                            <th>发布人id</th>
+                            <th>创建时间</th>
+                        </tr>
+                        {% for rec in receives %}
+                        <tr>
+                            <td>{{ rec.task_id }}</td>
+                            <td>{{ rec.task_name }}</a></td>
+                            <td>{{ rec.task_reward }}</td>
+                            <td>{{rec.owner_id}}</td>
+                            <td>{{rec.create_at }}</td>
+
+                        </tr>
+                        {% endfor %}
+                    </table>
                 </div>
             </div>
         </div>

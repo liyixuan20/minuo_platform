@@ -259,6 +259,9 @@ class receive_info:
         self.rec_id = rec_id
         self.task_id = task_id
         self.status = status
+        self.owner_id = 0
+        self.task_name = ''
+        self.task_reward = 0
 
 def get_receive_by_id(rec_id):
     return session.query(Receive).filter(Receive.id == rec_id).one_or_none()
@@ -274,7 +277,17 @@ def get_receive_info(task_id):
 
     
     return rrc
-
+def get_all_accepted_task(user_id):
+    recs = session.query(Receive).filter(Receive.user_id == user_id, Receive.status == 2).all()
+    receives = []
+    for rec in recs:
+        tsk = session.query(Task).filter(Task.id == rec.task_id).one_or_none()
+        recei = receive_info("", user_id,0,rec.create_at,  rec.id, tsk.id, tsk.status)
+        recei.owner_id = tsk.owner_id
+        recei.task_name = tsk.name
+        recei.task_reward = tsk.reward
+        receives.append(recei)
+    return receives
 class request_info:
     def __init__(self, req_id, user_id, task_id, nickname, credits) -> None:
         self.id = req_id
