@@ -263,6 +263,9 @@ def update_portrait_files(user_id, filename):
     
     return
 
+
+
+
 #-------------------------------------------------------------------------------------------------------------
 class quest_info:
 
@@ -516,8 +519,9 @@ def delete_copy_files_by_task_id(que_list:quest_list) -> None:
     quest_num:int = que_list.quest_num
     for i in range(1, quest_num + 1):
         quest:quest_info = que_list.get_Quest_by_questID(i)
-        for path in quest.copy_path:
-            os.remove(path)
+        for path in quest.src_list:
+            new_path = './media/' + path
+            os.remove(new_path)
     print("成功删除完毕")
     return
 

@@ -635,6 +635,7 @@ def setProfilefunc(request):
         "tel":user_info.tel,
         "points":user_info.points,
         "portrait": porpath,
+        
     }
 
     
@@ -642,11 +643,14 @@ def setProfilefunc(request):
     if request.POST:
         username = request.POST['username']
         Telphone = request.POST['Telphone']
+        email = request.POST['email']
         # print(username)
         # print(Telphone)
         change_profile_name(user.id,username)
         change_profile_tel(user.id,Telphone)
         change_profile_points(user.id,20)
+        change_profile_email(user.id, email)
+
         return redirect('profile')
     return render(request, 'setProfile.html',objs)
 

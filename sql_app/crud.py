@@ -182,6 +182,10 @@ def change_profile_points(user_id, points):
     profile = session.query(Profile).filter(Profile.user_id == user_id)
     profile.update({Profile.points:points})
     session.commit()
+def change_profile_email(user_id, email):
+    user = User.objects.get(id = user_id)
+    user.email = email
+    user.save()
 
 def get_all_task():
     #返回已创建的所有任务
