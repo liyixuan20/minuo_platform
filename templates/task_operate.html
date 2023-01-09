@@ -236,9 +236,9 @@
       </nav>
     
     {% for quest in quests %}
-    <div class="task-quest" id="{{quest.quest_id}}">
+    <div class="task-quest" id="{{quest.quest_id}}" style="font-size: 1em;">
         <div class="task-quest-NO" style="text-align: center;font-size: x-large">{{quest.quest_id}}</div>
-        <p class = "task-quest-description" style="text-align: center;font-size: x-large">{{quest.quest_text}}</p>
+        <p class = "task-quest-description" style="text-align: center;font-size: 1.8em">{{quest.quest_text}}</p>
         {% if task_type == 1 %}
         <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
             <div style="width: 33.33%;"></div>
@@ -253,13 +253,13 @@
             <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
                 <div style="width: 33.33%;"></div>
                 <!-- <textarea class="jq-text-quest-content text-{{quest.quest_id}}" path="{{path}}" cols="30"  readonly></textarea> -->
-                <textarea class="form-control"  rows="10" cols="20"  readonly>{{quest.copy_path.0}}</textarea>
+                <textarea class="form-control"  rows="10" cols="20"  readonly style="width: 33.33%;">{{quest.copy_path.0}}</textarea>
             </div>
         {% elif task_type == 4 %}
             {% for path in quest.copy_path %}
             <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
             <div style="width: 33.33%;"></div>
-                <audio src="{{path}}" controls preload="auto"></audio>
+                <audio src="{{path}}" controls preload="auto" style="width: 33.33%;"></audio>
             </div>
             {% endfor %}
         {% else %}
@@ -267,11 +267,11 @@
         {% endif %}
         <!-- <div class="task-source">{{quest.quest_pics_path_list.0}}</div> -->
         {% for quest_option in quest.option_list %}
-        <div class="custom-control custom-radio" style="text-align: center;font-size: x-large;margin-top: 5px;">
+        <div class="custom-control custom-radio" style="text-align: center;margin-top: 5px;">
 
             <input type="radio" id="{{quest.quest_id}}+{{quest_option}}" name="{{quest.quest_id}}" class="custom-control-input" value="{{quest.quest_id}},{{quest_option}}">
 
-            <label class="custom-control-label" for="{{quest.quest_id}}+{{quest_option}}">{{quest_option}}</label>
+            <label class="custom-control-label" for="{{quest.quest_id}}+{{quest_option}}" style="font-size: 1.3em;">{{quest_option}}</label>
         </div>
         <!-- <div><input type="radio" class="task-item" id="0" name = "quest_option" value = "{{quest_option}}">{{quest_option}}</input></div> -->
         {% endfor %}  

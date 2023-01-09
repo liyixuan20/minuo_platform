@@ -148,7 +148,7 @@
     {% for quest in quests %}
     <div class="task-quest" id="{{quest.quest_id}}">
         <div class="task-quest-NO" style="text-align: center;font-size: x-large">{{quest.quest_id}}</div>
-        <p class = "task-quest-description" style="text-align: center;font-size: x-large">{{quest.quest_text}}</p>
+        <p class = "task-quest-description" style="text-align: center;font-size: 1.8em">{{quest.quest_text}}</p>
         {% if task_type == 1 %}
         <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
             <div style="width: 33.33%;"></div>
@@ -163,13 +163,13 @@
             <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
                 <div style="width: 33.33%;"></div>
                 <!-- <textarea class="jq-text-quest-content text-{{quest.quest_id}}" path="{{path}}" cols="30"  readonly></textarea> -->
-                <textarea class="form-control"  rows="10" cols="20"  readonly>请接取任务后查看</textarea>
+                <textarea class="form-control"  rows="10" cols="20"  readonly style="width: 33.33%;">请接取任务后查看</textarea>
             </div>
         {% elif task_type == 4 %}
             {% for path in quest.copy_path %}
             <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
             <div style="width: 33.33%;"></div>
-                <audio src="{{path}}" controls preload="auto"></audio>
+                <audio src="{{path}}" controls preload="auto" style="width: 33.33%;"></audio>
             </div>
             {% endfor %}
         {% else %}
@@ -177,9 +177,9 @@
         {% endif %}
     </div>
     {% endfor %}
-    <div class="custom-control" style="text-align: center;font-size: x-large;margin-top: 5px;">选项请在接受任务后查看</div>
+    <div class="custom-control" style="text-align: center;font-size: 1.3em;margin-top: 5px;">选项请在接受任务后查看</div>
     <div style="width: 100%;display:inline-flex;flex-direction: row;margin-top: 35px;margin-bottom: 20px;">
-        <div style="width: 45%;"></div>
+        <div style="width: 37.5%;"></div>
         <a href="../task_request/{{ task_id }}/" style="width: 25%;"><button type="button" class="btn btn-outline-success" style="width: 100%;">申请任务</button></a>
     </div>
     

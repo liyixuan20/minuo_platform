@@ -107,7 +107,10 @@
         <div class="card" style = "margin-left:39px;width: 50%;border-radius: 12px;margin-top: 30px;">
 
         <div style="margin-left: 5%;margin-top: 20px;">
-            文件上传说明：{{upload_description}}
+            {% autoescape off %}
+            {{upload_description}}
+            {% endautoescape %}
+            
         </div>
         <form class="form-horizontal" method="POST" enctype="multipart/form-data" style = "padding-top:20px;margin-left:39px;">
             {% csrf_token %}
@@ -123,7 +126,7 @@
         </form>
             </div>
         </div>
-        {% endif %}
+    {% endif %}
         
     </div>
 </body>

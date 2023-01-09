@@ -294,8 +294,6 @@ def task_request(request,task_id):
     user = User.objects.get(username = username)
     task = get_task_by_task_id(task_id)
     req_id = request_task(user.id,task_id)
-    # TODO
-    
     # print(req_id)
     # def download_file_path(username, user_id, task_state, task_id):
     objs = {
@@ -363,60 +361,60 @@ def front_task_upload(request,req_id):
         return redirect('profile')
     return render(request, 'task_upload.html', obj)
 
-def getQusetByQuestID(questid):
-    # 前端模拟后端，用于调试
-    quests_database = [{"quest_type":1,"quest_id":1,
-"quest_text":"题目一描述",
-"quest_option_num":4,
-"quest_musicnum":0,
-"quest_options_list":["选项1","选项2","选项3","选项4"],
-"quest_musics_list":[],
-"quest_pics_path_list":["path1"]
-},{"quest_type":1,"quest_id":2,
-"quest_text":"题目二描述",
-"quest_option_num":4,
-"quest_musicnum":0,
-"quest_options_list":["选项1","选项2","选项3","选项4"],
-"quest_musics_list":[],
-"quest_pics_path_list":["path2"]
-},{"quest_type":1,"quest_id":3,
-"quest_text":"题目三描述",
-"quest_option_num":4,
-"quest_musicnum":0,
-"quest_options_list":["选项1","选项2","选项3","选项4"],
-"quest_musics_list":[],
-"quest_pics_path_list":["path3"]
-},{"quest_type":1,"quest_id":4,
-"quest_text":"题目四描述",
-"quest_option_num":4,
-"quest_musicnum":0,
-"quest_options_list":["选项1","选项2","选项3","选项4"],
-"quest_musics_list":[],
-"quest_pics_path_list":["path4"]
-},{"quest_type":1,"quest_id":5,
-"quest_text":"题目五描述",
-"quest_option_num":4,
-"quest_musicnum":0,
-"quest_options_list":["选项1","选项2","选项3","选项4"],
-"quest_musics_list":[],
-"quest_pics_path_list":["path4"]
-}]
-    for quest in quests_database:
-        # print(quest["quest_id"])
-        # print(questid)
-        if quest["quest_id"] == questid:
+# def getQusetByQuestID(questid):
+#     # 前端模拟后端，用于调试
+#     quests_database = [{"quest_type":1,"quest_id":1,
+# "quest_text":"题目一描述",
+# "quest_option_num":4,
+# "quest_musicnum":0,
+# "quest_options_list":["选项1","选项2","选项3","选项4"],
+# "quest_musics_list":[],
+# "quest_pics_path_list":["path1"]
+# },{"quest_type":1,"quest_id":2,
+# "quest_text":"题目二描述",
+# "quest_option_num":4,
+# "quest_musicnum":0,
+# "quest_options_list":["选项1","选项2","选项3","选项4"],
+# "quest_musics_list":[],
+# "quest_pics_path_list":["path2"]
+# },{"quest_type":1,"quest_id":3,
+# "quest_text":"题目三描述",
+# "quest_option_num":4,
+# "quest_musicnum":0,
+# "quest_options_list":["选项1","选项2","选项3","选项4"],
+# "quest_musics_list":[],
+# "quest_pics_path_list":["path3"]
+# },{"quest_type":1,"quest_id":4,
+# "quest_text":"题目四描述",
+# "quest_option_num":4,
+# "quest_musicnum":0,
+# "quest_options_list":["选项1","选项2","选项3","选项4"],
+# "quest_musics_list":[],
+# "quest_pics_path_list":["path4"]
+# },{"quest_type":1,"quest_id":5,
+# "quest_text":"题目五描述",
+# "quest_option_num":4,
+# "quest_musicnum":0,
+# "quest_options_list":["选项1","选项2","选项3","选项4"],
+# "quest_musics_list":[],
+# "quest_pics_path_list":["path4"]
+# }]
+#     for quest in quests_database:
+#         # print(quest["quest_id"])
+#         # print(questid)
+#         if quest["quest_id"] == questid:
             
-            return quest
-        else:
-            moren_quest = {"quest_type":1,"quest_id":0,
-"quest_text":"默认描述",
-"quest_option_num":4,
-"quest_musicnum":0,
-"quest_options_list":["选项","选项","选项","选项"],
-"quest_musics_list":[],
-"quest_pics_path_list":["picpath"]
-}
-    return moren_quest 
+#             return quest
+#         else:
+#             moren_quest = {"quest_type":1,"quest_id":0,
+# "quest_text":"默认描述",
+# "quest_option_num":4,
+# "quest_musicnum":0,
+# "quest_options_list":["选项","选项","选项","选项"],
+# "quest_musics_list":[],
+# "quest_pics_path_list":["picpath"]
+# }
+#     return moren_quest 
 
 def task_operate_complete(request):
     user_name = request.user
@@ -535,6 +533,8 @@ def front_upload_file(request):
     global  points
     global  taskinfo
     global  tasktype
+    global  upload_description
+    upload_description=''
     # print(user.id)
     if request.POST and 'taskname' in request.POST:
         taskname = request.POST['taskname']
@@ -554,6 +554,18 @@ def front_upload_file(request):
             tasktype = 4
         else:
             print(tasktype)
+        tasktype = int(tasktype)
+        print("tasktype=",tasktype)
+        if tasktype == 1:
+            upload_description="<h4>上传文件格式：</h4><p>将存放图片的文件夹src与说明文件items.txt压缩为文件为任务名的zip压缩包；</p><p>items.txt的格式为:</p><p><div>题目数量(数字)</div><div>题目序号(数字，从1开始),题目描述,选项个数（数字）,选项1,选项2...,图片名称(***.png/***.jpg)</div>...</p>"
+        elif tasktype == 2:
+            upload_description="<h4>上传文件格式：</h4><p>将存放图片的文件夹src与说明文件items.txt压缩为文件为任务名的zip压缩包；</p><p>items.txt的格式为:</p><p><div>题目数量(数字)</div><div>题目序号(数字，从1开始),题目描述,图片名称(***.png/***.jpg)...</div></p>"
+        elif tasktype == 3:
+            upload_description="<h4>上传文件格式：</h4><p>将存放待识别文本文件的文件夹src与说明文件items.txt压缩为文件为任务名的zip压缩包；</p><p>items.txt的格式为:</p><p><div>题目数量(数字)</div><div>题目序号(数字，从1开始),题目描述,题目文本文件名(**.txt),选项个数（数字）,选项1,选项2...</div>...</p>"
+        elif tasktype == 4:
+            upload_description="<h4>上传文件格式：</h4><p>将存放音频文件的文件夹src与说明文件items.txt压缩为文件为任务名的zip压缩包；</p><p>items.txt的格式为:</p><p><div>题目数量(数字)</div><div>题目序号(数字，从1开始),题目描述,音频文件数(数字),选项个数（数字）,音频文件名(***.mp3),选项1,选项2...</div>...</p>"
+        else:
+            upload_description="\n任务类型错误\n"
         # print(points)
         step=2
         # print(points)
@@ -579,6 +591,7 @@ def front_upload_file(request):
     objs = {
        "step":step,
        "portrait":porpath,
+       "upload_description":upload_description,
     }
     return render(request, 'upload.html', objs)
 
