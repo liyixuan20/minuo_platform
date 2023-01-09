@@ -650,9 +650,9 @@ def get_receive_list(request, task_id):
     
     return render(request, 'receive_list.html', objs)
 
-def receive_download(request, rec_id):
+def receive_download(request, task_id):
 
-    rec = get_receive_by_id(rec_id)
+    rec = get_receive_by_id(task_id)
     user = User.objects.get(id = rec.user_id)
     #def download_file_path(username, user_id, task_state, task_id):
     file_path = download_file_path(user.username,user.id,1,rec.task_id)
