@@ -198,7 +198,7 @@ def delete_request(task_id, user_id):
 
     session.commit()
     return 0
-def update_request(task_id):
+def update_request(task_id, user_id):
     q = session.query(Request).filter(Request.task_id == task_id).all()
     if q == []:
         # tk = session.query(Task).filter(Task.id == task_id).one()
@@ -207,6 +207,12 @@ def update_request(task_id):
         tsk = session.query(Task).filter(Task.id == task_id).one_or_none()
         # if tk.statue == 1:
         if tsk.status == 1:
+            tsk.status = 0
+        elif tsk.status > 1:
+            pro = session.query(Profile).filter(Profile.user_id == user_id).one_or_none()
+            pro.credits -= 5
+            if tsk.status == 3:
+                session.query(Receive).filter(Receive.user_id == user_id).delete()
             tsk.status = 0
     session.commit()
     return 0
