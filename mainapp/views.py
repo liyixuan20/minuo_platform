@@ -452,6 +452,15 @@ def front_task_operate(request,req_id):
     #             quest.quest_option_nums = [0]
     #         else:
     #             quest.quest_option_nums.append(i)
+    if task.quest_type == 3:
+        for quest in quests:
+            text_path = quest.copy_path[0]
+            text_path = "./media"+text_path[10:]
+            print(text_path)
+            with open(text_path,"r",encoding="utf-8") as f:
+                text_content = f.read()
+                # print(text_content)
+                quest.copy_path[0]=text_content
     obj={
         "task_id":req_id,
         "taskname":taskname,
