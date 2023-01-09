@@ -577,7 +577,7 @@ def task_cancel_request(request,req_id):
     user_name = request.user
     user = User.objects.get(username = user_name)
     delete_request(req_id,user.id)
-    update_request(req_id)
+    update_request(req_id, user.id)
     return redirect('profile')
 
 def front_task_complete(request,task_id):
