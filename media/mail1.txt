@@ -1,0 +1,43 @@
+这是第一题的文本
+刷新查询缓存 mysql_MySQL刷新查询缓存
+
+weixin_39883286
+
+于 2021-02-02 18:21:23 发布
+
+840
+ 收藏
+文章标签： 刷新查询缓存 mysql
+版权
+让我解释为什么它没有帮助.
+
+您的要求：在这里您尝试再次运行相同的查询,但是您希望它仅通过清理缓存来执行第一次运行.
+
+当查询运行时,有多种类型的缓存进入图片.
+
+“查询缓存”是我们谈论的最常见的缓存,然后是MySQL缓存(例如Innodb缓冲池),table_cache(在MySQL级别和InnoDB级别),OS缓存,硬件缓存.
+
+选择SQL_NO_CACHE：这将阻止运行查询以保存任何“查询缓存”,这意味着如果您将再次运行相同的查询,不会有任何“查询缓存”,但其他缓存将在图片中.
+
+FLUSH QUERY CACHE：这只是对’查询缓存’进行碎片整理以更好地利用其内存
+
+重置QUERY CACHE：从“查询缓存”中删除所有查询结果,如果您在之前的所有查询中都使用了“SQL_NO_CACHE”,则不会产生影响.
+
+>除了你正在尝试的东西,你可以尝试避免这些缓存的更多事情.
+
+> MySQL重启必须用于’MySQL Caches'(Innodb Buffer Pool)
+
+别无他法.
+
+> set global key_buffer_size = 0;使密钥缓冲区大小为零
+
+> set global query_cache_type = 0;
+
+> set global query_cache_size = 0;
+
+> OS级别缓存：this帖子可以帮到你
+
+相关资源：C-C++实现mysql数据库的缓存管理【附带编译及使用说明】-C++代码...
+————————————————
+版权声明：本文为CSDN博主「weixin_39883286」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/weixin_39883286/article/details/113635136

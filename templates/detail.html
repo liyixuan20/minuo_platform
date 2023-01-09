@@ -2,8 +2,81 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
 <head>
+    
+    
+    <!-- <link rel="stylesheet" type="text/css" href="/static/picjqshow_jb51net/css/jquery.Jcrop.css"/>
+    <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="/static/picjqshow_jb51net/js/jquery.Jcrop.js"></script> -->
+    
+    <link rel="stylesheet" type="text/css" href="/static/Jcrop/jcrop.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/Jcrop/jcrop.dev.css"/>
+    <script type="text/javascript" src="/static/Jcrop/jcrop.js"></script>
+    <script type="text/javascript" src="/static/Jcrop/jcrop.dev.js"></script>
     <script type="text/javascript" src="/static/jquery-3.6.3.js"></script>
+    
 </head>
+<script>
+    var js_task_id = 0 ;
+    var js_task_items_num = 0;
+    var js_items_answer = new Array();
+    var js_items_answer_x1 = new Array();
+    var js_items_answer_y1 = new Array();
+    var js_items_answer_x2 = new Array();
+    var js_items_answer_y2 = new Array();
+    var js_task_type = 0;
+    var last_item = 1;
+    var jcropApi;
+    $().ready(function(){
+        $(".task-quest").hide();
+        $(".hidden").hide()
+        $(".task-quest#1").show();
+        $(".page-item#test1").attr({
+            "class":"page-item active"
+        });
+
+        js_task_id = $("#js-task-id").text();
+        js_task_items_num = $("#js-task-item-num").text();
+        js_task_type = $("#js-task-type").text();
+        console.log("js_task_type = ",js_task_type)
+
+        $(".page-item .page-link").click(function(){
+            $(".page-item").attr({
+                "class":"page-item"
+            });
+            $(this).parent().attr({
+                "class":"page-item active"
+            });
+            console.log(this.text)
+            var id_num = this.text;
+            $(".task-quest").hide();
+            var str = ".task-quest#"+String(id_num);
+            var task_quest = $(str);
+            // jq_radios_checked = $(":radio:checked");
+            // jq_thisradio_checked = $(jq_radios_checked.get(last_item-1));
+            // console.log(jq_thisradio_checked)
+            // js_items_answer[last_item-1] = jq_thisradio_checked.val();
+            // console.log("last_item = ",last_item)
+            // console.log(jq_thisradio_checked.val());
+            // console.log(js_items_answer);
+            task_quest.show();
+            last_item = id_num
+        })
+
+        // $(jq_img_select_str).imgAreaSelect({
+        //     // movable:true,
+        //     // resizable:true,
+        //     // show:true,
+        // });
+        // $("#img-select1").click(function(){
+        //     console.log("图片框选1")
+
+        // })
+        $("audio").click(function(){
+            // this.pause()
+
+        })
+    })
+</script>
 <nav class="navbar navbar-expand-lg navbar-light justify-content-between sticky-top" style="background: linear-gradient(to right,thistle,cornsilk,#e3f2fd);">
     <a class="navbar-brand" style="font-family: '幼圆';font-weight: 500;font-size: xx-large;">米诺众包</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,13 +86,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="..">主页</a>
+                <a class="nav-link" href="../..">主页</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../list/">任务中心</a>
+                <a class="nav-link" href="../../list/">任务中心</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../upload/">创建任务</a>
+                <a class="nav-link" href="../../upload/">创建任务</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">帮助</a>
@@ -29,7 +102,7 @@
             </li>
         </ul>
         <ul class="navbar-nav  justify-content-end">
-            <li class="nav-item"><img src={{ portrait }} class="mx-auto" alt="diluc" style=" 
+            <li class="nav-item"><img src="/media_url/necoru.jpg" class="mx-auto" alt="diluc" style=" 
                 height: 34px;
                 display: flex;
                 border-radius: 50%;
@@ -37,22 +110,79 @@
                 justify-content: center;
                 overflow: hidden;"></li>
             <li class="nav-item">
-                <a class="nav-link" href="../profile/">{{ user.username }}</a>
+                <a class="nav-link" href="../../profile/">{{ user.username }}</a>
             </li>  
             <li class="nav-item">
-                <a class="nav-link" href="../signup/">注册</a>
+                <a class="nav-link" href="../../signup/">注册</a>
             </li>
         </ul>
     </div>
 </nav>
 <div>
-    <h1>{{task.name}}</h1>
-    <p style="width:70%;font-size: large;word-wrap: break-word;display: block;margin: 0 auto;text-align: center;">{{task.task_info}}</p>
-    <div style="padding-top:15px;margin-left:3px;margin-right:42px;display: flex;">
-        <a href="../file_download/{{ task.id }}/" style="height:50px;width:40%;display: block;margin-right:10%;margin-left: 15%;"><button class="btn btn-outline-primary" >下载任务文件</button></a>
-        <a href="../task_request/{{ task.id }}/" style="height:50px;display: block;width: 20%;"><button type="button" class="btn btn-outline-success">申请任务</button></a>
+    <a class="hidden" id="js-task-id">{{task_id}}</a>
+    <a class="hidden" id="js-task-item-num">{{task_item_num}}</a>
+    <a class="hidden" id="js-task-type">{{task_type}}</a>
+    <h1>{{taskname}}</h1>
+    <p style="width:70%;font-size: x-large;word-wrap: break-word;display: block;margin: 0 auto;text-align: center;">{{task_description}}</p>
+    <nav aria-label="Page navigation example" style="display:inline-flex;flex-direction: row;width: 100%;margin-top: 30px;">
+        <div style="width: 33.33%;"></div>
+        <ul class="pagination" style="width: 33.33%;display: flex;justify-content: center;">
+          <!-- <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li> -->
+          {% for i in task_item_range %}
+          <li class="page-item" id="test{{i}}"><a class="page-link">{{i}}</a></li>
+          <!-- <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"> -->
+            {% endfor %}
+            <!-- <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a> -->
+          </li>
+        </ul>
+      </nav>
+    
+    {% for quest in quests %}
+    <div class="task-quest" id="{{quest.quest_id}}">
+        <div class="task-quest-NO" style="text-align: center;font-size: x-large">{{quest.quest_id}}</div>
+        <p class = "task-quest-description" style="text-align: center;font-size: x-large">{{quest.quest_text}}</p>
+        {% if task_type == 1 %}
+        <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
+            <div style="width: 33.33%;"></div>
+            <img class="img-fluid" src="{{quest.copy_path.0}}" style="width: 33.33%; height:auto;">
+        </div>
+        {% elif task_type == 2 %}
+        <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
+            <div style="width: 33.33%;"></div>
+            <img  id="img-select{{quest.quest_id}}" src="{{quest.copy_path.0}}" style="width: 33.33%; height:auto;">
+        </div>
+        {% elif task_type == 3 %}
+            <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
+                <div style="width: 33.33%;"></div>
+                <!-- <textarea class="jq-text-quest-content text-{{quest.quest_id}}" path="{{path}}" cols="30"  readonly></textarea> -->
+                <textarea class="form-control"  rows="10" cols="20"  readonly>请接取任务后查看</textarea>
+            </div>
+        {% elif task_type == 4 %}
+            {% for path in quest.copy_path %}
+            <div style="display:inline-flex;flex-direction: row;width: 100%;margin-bottom: 25px;">
+            <div style="width: 33.33%;"></div>
+                <audio src="{{path}}" controls preload="auto"></audio>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div> 任务类型错误 </div>
+        {% endif %}
     </div>
-    {{ file }}
+    {% endfor %}
+    <div class="custom-control" style="text-align: center;font-size: x-large;margin-top: 5px;">选项请在接受任务后查看</div>
+    <div style="width: 100%;display:inline-flex;flex-direction: row;margin-top: 35px;margin-bottom: 20px;">
+        <div style="width: 45%;"></div>
+        <a href="../task_request/{{ task_id }}/" style="width: 25%;"><button type="button" class="btn btn-outline-success" style="width: 100%;">申请任务</button></a>
+    </div>
+    
 </div>
 
 {% endblock %}
