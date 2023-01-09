@@ -6,7 +6,7 @@ from sql_app.crud import *
 
 from sql_app.mission_files import *
 
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+#from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse,Http404, FileResponse
@@ -19,7 +19,8 @@ def listfunc(request):
     username = request.user
     user = User.objects.get(username=username)
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -58,14 +59,17 @@ def profilefunc(request):
 
     #返回用户头像
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
     else: 
         porpath = '/media_url/'  + por
     
-        
+    
+    receives = get_all_accepted_task(user.id)
+      
     objs = {
         "username": user_info.nickname,
         "tel":tel,
@@ -73,7 +77,8 @@ def profilefunc(request):
         "requests": request_tasks,
         "points":user_info.points,
         "credits":user_info.credits,
-        "portrait": porpath
+        "portrait": porpath,
+        "receives":receives,
     }
 
     return render(request, 'profile.html', objs)
@@ -82,7 +87,8 @@ def portrait_upload(request):
     user_name = request.user
     user = User.objects.get(username = user_name)
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -108,12 +114,13 @@ def portrait_upload(request):
 
 def hwfunc(request):
     por = ''
-    if (request.user):
-        username = request.user
-        print(username)
-        user = User.objects.get(username = username)
-        por = query_portrait(user.id)
-        update_portrait_files(user.id, por)
+    # if (request.user):
+    #     username = request.user
+    #     print(username)
+    #     user = User.objects.get(username = username)
+    #     por = query_portrait(user.id)
+    #     if por != '':
+    #         update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -185,15 +192,17 @@ def detailfunc(request, task_id):
     username = user.username
 
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
     else: 
         porpath = '/media_url/'  + por
-
-    task = process_quest_files(username,user_id,task_id)
-    taskname = get_task_by_task_id(task_id).name
+    tsk = get_task_by_task_id(task_id)
+    owner = User.objects.get(id = tsk.owner_id)
+    task = process_quest_files(owner.username,tsk.owner_id,task_id)
+    taskname = tsk.name
     # task = get_task_by_task_id(req_id)
     task_description = task.task_info
     task_item_num = task.quest_num
@@ -243,7 +252,8 @@ def detail_request_func(request, pk):
     user = User.objects.get(username = username)
 
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -310,7 +320,8 @@ def task_request_pass(request,task_id):
     user = User.objects.get(username = username)
 
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -335,7 +346,8 @@ def front_task_upload(request,req_id):
     user = User.objects.get(username = user_name)
 
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -456,7 +468,8 @@ def front_task_operate(request,req_id):
     username = user.username
 
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -464,8 +477,10 @@ def front_task_operate(request,req_id):
         porpath = '/media_url/'  + por
 
     # (username : str, user_id : int, task_id : int) -> quest_list:
-    task = process_quest_files(username,user_id,req_id)
-    taskname = get_task_by_task_id(req_id).name
+    tsk = get_task_by_task_id(req_id)
+    owner = User.objects.get(id = tsk.owner_id)
+    task = process_quest_files(owner.username,tsk.owner_id,req_id)
+    taskname = tsk.name
     # task = get_task_by_task_id(req_id)
     task_description = task.task_info
     task_item_num = task.quest_num
@@ -524,7 +539,8 @@ def front_upload_file(request):
     # user_info= get_profile_by_user_id(user.id)
 
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -587,7 +603,8 @@ def task_complete_page(request,task_id):
     user_name = request.user
     user = User.objects.get(username = user_name)
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -624,7 +641,8 @@ def setProfilefunc(request):
 
 
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -662,7 +680,8 @@ def change_password(request):
 
 
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -704,7 +723,8 @@ def get_receive_list(request, task_id):
     user_name = request.user
     user = User.objects.get(username = user_name)
     por = query_portrait(user.id)
-    update_portrait_files(user.id, por)
+    if por != '':
+        update_portrait_files(user.id, por)
     user_info= get_profile_by_user_id(user.id)
     if por == '':
         porpath = '/media_url/necoru.jpg'
@@ -742,77 +762,77 @@ def receive_download(request, task_id):
         raise Http404
 # ---------------------邮箱验证--------------------------------
 #验证成功的user is_active = 1
-def generate_verify_email_url(user):
+# def generate_verify_email_url(user):
 
-    EMAIL_VERIFY_URL = 'http://82.157.251.139:3306/emails/verification'
-    s = Serializer(settings.SECRET_KEY, 60 * 60 * 24)
-    data = {'user_id' : user.id, 'email' : user.email}
-    token = s.dumps(data)
-    print(type(token))
-    return EMAIL_VERIFY_URL + '?token=' + token.decode()
+#     EMAIL_VERIFY_URL = 'http://82.157.251.139:3306/emails/verification'
+#     s = Serializer(settings.SECRET_KEY, 60 * 60 * 24)
+#     data = {'user_id' : user.id, 'email' : user.email}
+#     token = s.dumps(data)
+#     print(type(token))
+#     return EMAIL_VERIFY_URL + '?token=' + token.decode()
 
-def check_verify_email_token(token):
-    s = Serializer(settings.SECRET_KEY, 60 * 60 * 24)
-    try:
-        data = s.loads(token)
-    except :
-        return None
-    else:
-        user_id = data.get('user_id')
-        email = data.get('email')
-        try:
-            user = User.objects.get(id = user_id, email = email)
-        except User.DoesNotExist:
-            return None
-        else:
-            return user
+# def check_verify_email_token(token):
+#     s = Serializer(settings.SECRET_KEY, 60 * 60 * 24)
+#     try:
+#         data = s.loads(token)
+#     except :
+#         return None
+#     else:
+#         user_id = data.get('user_id')
+#         email = data.get('email')
+#         try:
+#             user = User.objects.get(id = user_id, email = email)
+#         except User.DoesNotExist:
+#             return None
+#         else:
+#             return user
 
-def send_verify_email(emails, verify_url):
-    subject = "米诺众包平台邮箱验证"
-    html_message = '<p>您的邮箱为：%s,请点击链接激活邮箱</p>'\
-                   '<p><a href = "%s">%s</a></p>' %(emails, verify_url, verify_url)
-    try:
-        send_mail(subject, '', settings.EMAIL_FROM, [emails], html_message = html_message)
-    except  Exception as e:
-        print(e)
+# def send_verify_email(emails, verify_url):
+#     subject = "米诺众包平台邮箱验证"
+#     html_message = '<p>您的邮箱为：%s,请点击链接激活邮箱</p>'\
+#                    '<p><a href = "%s">%s</a></p>' %(emails, verify_url, verify_url)
+#     try:
+#         send_mail(subject, '', settings.EMAIL_FROM, [emails], html_message = html_message)
+#     except  Exception as e:
+#         print(e)
 
 
-def EmailReceive(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        username = request.POST['username']
-        if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
-            return HttpResponse('邮箱格式错误')
+# def EmailReceive(request):
+#     if request.method == 'POST':
+#         email = request.POST['email']
+#         username = request.POST['username']
+#         if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
+#             return HttpResponse('邮箱格式错误')
 
-        try:
-            user = User.objects.get(username = username)
-            user.email = email
-            user.save()
-        except Exception as e:
-            return HttpResponse('user error')
-        verify_url = generate_verify_email_url(user)  
+#         try:
+#             user = User.objects.get(username = username)
+#             user.email = email
+#             user.save()
+#         except Exception as e:
+#             return HttpResponse('user error')
+#         verify_url = generate_verify_email_url(user)  
 
-        send_verify_email(email, verify_url)
+#         send_verify_email(email, verify_url)
 
-        return JsonResponse({'code':200, 'errmsg':'ok'})
-    else:
-        HttpResponse('未接收到邮箱')
+#         return JsonResponse({'code':200, 'errmsg':'ok'})
+#     else:
+#         HttpResponse('未接收到邮箱')
     
-def VerifyEmail(request):
-    if request.method == 'GET':
-        token = request.GET['token']
+# def VerifyEmail(request):
+#     if request.method == 'GET':
+#         token = request.GET['token']
 
-        if not token:
-            return HttpResponse('缺少token参数')
-        user = check_verify_email_token(token)
-        if not user:
-            return HttpResponse('无效token')
-        try:
-            user.is_active = True
-            user.save()
-        except Exception as e:
-            return HttpResponse('激活邮箱失败')
+#         if not token:
+#             return HttpResponse('缺少token参数')
+#         user = check_verify_email_token(token)
+#         if not user:
+#             return HttpResponse('无效token')
+#         try:
+#             user.is_active = True
+#             user.save()
+#         except Exception as e:
+#             return HttpResponse('激活邮箱失败')
         
-        return redirect('profile')
+#         return redirect('profile')
 
   
